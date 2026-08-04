@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException,Depends,APIRouter
 
 from app.core.database import get_db
+from app.api.auth import get_current_user
+from app.models.user import User
 
 from app.crud.staff import(
     create_staff,
@@ -24,20 +26,23 @@ router = APIRouter(
 @router.post("/",response_model=StaffResponse)
 def create(
     staff : StaffCreate,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     return create_staff(db,staff)
 
 @router.get("/",response_model=list[StaffResponse])
 def read_all(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     return get_staff(db)
 
 @router.get("/{staff_id}",response_model=StaffResponse)
 def read_one(
     staff_id : int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     staff = get_staff_member(db,staff_id)
 
@@ -52,7 +57,8 @@ def read_one(
 def update(
     staff_id : int,
     staff : StaffCreate,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     updated = update_staff(
         db,
@@ -69,7 +75,8 @@ def update(
 @router.delete("/{staff_id}")
 def delete(
     staff_id : int,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     deleted = delete_staff(
         db,
