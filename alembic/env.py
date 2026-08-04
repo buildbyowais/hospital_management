@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from app.models.patient import Patient
 from app.models.doctor import Doctor
 from app.models.staff import Staff
+from app.models.user import User
 
 import os
 
