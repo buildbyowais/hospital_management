@@ -2,6 +2,8 @@ from fastapi import APIRouter,HTTPException,Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.api.auth import get_current_user
+from app.models.user import User
 
 from app.schemas.doctor import(
     DoctorCreate,
@@ -25,14 +27,16 @@ router = APIRouter(
 @router.post("/",response_model=DoctorResponse)
 def create(
     doctor : DoctorCreate,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user) 
 ):
     return create_doctor(db,doctor)
 
 
 @router.get("/",response_model=list[DoctorResponse])
 def read_all(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     return get_doctors(db)
 
@@ -40,7 +44,8 @@ def read_all(
 @router.get("/{doctor_id}",response_model=DoctorResponse)
 def read_one(
     doctor_id : int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     doctor = get_doctor(db,doctor_id)
 
@@ -56,7 +61,8 @@ def read_one(
 def update(
     doctor_id : int,
     doctor : DoctorCreate,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)
 ):
     updated = update_doctor(
         db,
@@ -73,7 +79,8 @@ def update(
 @router.delete("/{doctor_id}")
 def delete(
     doctor_id : int,
-    db : Session = Depends(get_db)
+    db : Session = Depends(get_db),
+    current_user : User = Depends(get_current_user)  
 ):
     deleted = delete_doctor(
         db,
