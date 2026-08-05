@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.api.auth import get_current_user
 from app.models.user import User
+from app.api.auth import require_role
+from app.crud.doctor import get_doctor_by_user_id
 
 from app.schemas.patient import (
     PatientCreate,
@@ -15,7 +16,8 @@ from app.crud.patient import (
     get_patients,
     get_patient,
     update_patient,
-    delete_patient
+    delete_patient,
+    get_patients_by_doctor
 )
 
 router = APIRouter(
@@ -28,7 +30,7 @@ router = APIRouter(
 def create(
     patient: PatientCreate,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin","staff"]))
 ):
     return create_patient(db, patient)
 
@@ -36,8 +38,17 @@ def create(
 @router.get("/", response_model=list[PatientResponse])
 def read_all(
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin","doctor","staff"]))
 ):
+    if current_user.role == "doctor":
+        doctor = get_doctor_by_user_id(db,current_user.id)
+
+        if not doctor:
+            raise HTTPException(
+                status_code=404,
+                detail="Doctor Profile not found"
+            )
+        return get_patients_by_doctor(db,doctor.id)
     return get_patients(db)
 
 
@@ -45,7 +56,7 @@ def read_all(
 def read_one(
     patient_id: int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin","doctor","staff"]))
 ):
     patient = get_patient(db, patient_id)
 
@@ -62,7 +73,7 @@ def update(
     patient_id: int,
     patient: PatientCreate,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     updated = update_patient(
         db,
@@ -83,7 +94,7 @@ def update(
 def delete(
     patient_id: int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     deleted = delete_patient(
         db,
