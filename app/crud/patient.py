@@ -9,7 +9,8 @@ def create_patient(db: Session, patient: PatientCreate):
         name=patient.name,
         age=patient.age,
         gender=patient.gender,
-        phone=patient.phone
+        phone=patient.phone,
+        doctor_id = patient.doctor_id
     )
 
     db.add(db_patient)
@@ -44,6 +45,7 @@ def update_patient(
     db_patient.age = patient.age
     db_patient.gender = patient.gender
     db_patient.phone = patient.phone
+    db_patient.doctor_id = patient.doctor_id
 
     db.commit()
     db.refresh(db_patient)
@@ -64,3 +66,10 @@ def delete_patient(
     db.commit()
 
     return db_patient
+
+def get_patients_by_doctor(db:Session,doctor_id:int):
+    return(
+        db.query(Patient)
+        .filter(Patient.doctor_id == doctor_id)
+        .all()
+    )
