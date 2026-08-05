@@ -64,3 +64,11 @@ def delete_doctor(
     db.commit()
 
     return db_doctor
+
+def get_doctor_by_user_id(db,user_id:int):
+    return(
+        db.query(Doctor)
+        .filter(Doctor.user_id == user_id)
+        .all()        
+    )
+    
