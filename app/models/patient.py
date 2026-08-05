@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String,ForeignKey
 
 from app.core.database import Base
 
@@ -11,3 +11,4 @@ class Patient(Base):
     age = Column(Integer, nullable=False)
     gender = Column(String(20), nullable=False)
     phone = Column(String(20), nullable=False)
+    doctor_id = Column(Integer, ForeignKey("doctors.id"), nullable=False)
