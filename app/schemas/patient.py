@@ -6,6 +6,7 @@ class PatientCreate(BaseModel):
     age: int
     gender: str
     phone: str
+    doctor_id : int
 
 
 class PatientResponse(BaseModel):
@@ -14,6 +15,7 @@ class PatientResponse(BaseModel):
     age: int
     gender: str
     phone: str
+    doctor_id : int
 
     class Config:
         from_attributes = True
