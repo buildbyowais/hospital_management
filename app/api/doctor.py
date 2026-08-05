@@ -2,7 +2,7 @@ from fastapi import APIRouter,HTTPException,Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.api.auth import get_current_user
+from app.api.auth import require_role
 from app.models.user import User
 
 from app.schemas.doctor import(
@@ -28,7 +28,7 @@ router = APIRouter(
 def create(
     doctor : DoctorCreate,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user) 
+    current_user : User = Depends(require_role(["admin"])) 
 ):
     return create_doctor(db,doctor)
 
@@ -36,7 +36,7 @@ def create(
 @router.get("/",response_model=list[DoctorResponse])
 def read_all(
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin","doctor","staff"]))
 ):
     return get_doctors(db)
 
@@ -45,7 +45,7 @@ def read_all(
 def read_one(
     doctor_id : int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin","doctor","staff"]))
 ):
     doctor = get_doctor(db,doctor_id)
 
@@ -62,7 +62,7 @@ def update(
     doctor_id : int,
     doctor : DoctorCreate,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     updated = update_doctor(
         db,
@@ -80,7 +80,7 @@ def update(
 def delete(
     doctor_id : int,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)  
+    current_user : User = Depends(require_role(["admin"])) 
 ):
     deleted = delete_doctor(
         db,
