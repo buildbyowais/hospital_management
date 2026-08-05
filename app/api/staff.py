@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException,Depends,APIRouter
 
 from app.core.database import get_db
-from app.api.auth import get_current_user
+from app.api.auth import require_role
 from app.models.user import User
 
 from app.crud.staff import(
@@ -27,14 +27,14 @@ router = APIRouter(
 def create(
     staff : StaffCreate,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     return create_staff(db,staff)
 
 @router.get("/",response_model=list[StaffResponse])
 def read_all(
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     return get_staff(db)
 
@@ -42,7 +42,7 @@ def read_all(
 def read_one(
     staff_id : int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     staff = get_staff_member(db,staff_id)
 
@@ -58,7 +58,7 @@ def update(
     staff_id : int,
     staff : StaffCreate,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     updated = update_staff(
         db,
@@ -76,7 +76,7 @@ def update(
 def delete(
     staff_id : int,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    current_user : User = Depends(require_role(["admin"]))
 ):
     deleted = delete_staff(
         db,
