@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
+from typing import Optional
 
 class StaffCreate(BaseModel):
     name : str
@@ -7,6 +8,7 @@ class StaffCreate(BaseModel):
     department : str
     phone : str
     salary : int
+    email: EmailStr
 
 class StaffResponse(BaseModel):
     id : int
@@ -16,6 +18,13 @@ class StaffResponse(BaseModel):
     department : str
     phone : str
     salary : int
+    user_id: Optional[int] = None
 
     class Config:
         from_attributes = True
+
+
+class StaffRegisterSchema(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
