@@ -22,8 +22,34 @@ def create_doctor(db:Session,doctor:DoctorCreate):
 
     return db_doctor
 
-def get_doctors(db:Session):
-    return db.query(Doctor).all()
+def get_doctors(
+    db: Session,
+    search: str | None = None,
+    specialization: str | None = None,
+    skip: int = 0,
+    limit: int = 10
+):
+    query = db.query(Doctor)
+
+    # Search by name or email
+    if search:
+        query = query.filter(
+            (Doctor.name.ilike(f"%{search}%")) |
+            (Doctor.email.ilike(f"%{search}%"))
+        )
+
+    # Filter by specialization
+    if specialization:
+        query = query.filter(
+            Doctor.specialization.ilike(f"%{specialization}%")
+        )
+
+    return (
+        query
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def get_doctor(db:Session,doctor_id:int):
     return(
@@ -77,4 +103,6 @@ def get_doctor_by_user_id(db,user_id:int):
         .filter(Doctor.user_id == user_id)
         .first()        
     )
-    
+
+def get_doctor(db: Session, doctor_id: int):
+    return db.query(Doctor).filter(Doctor.id == doctor_id).first()
