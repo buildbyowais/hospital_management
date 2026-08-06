@@ -13,3 +13,22 @@ class User(Base):
     role = Column(String(50),nullable=False)
 
     doctor = relationship("Doctor", back_populates="user", uselist=False)
+    staff = relationship("Staff",back_populates="user",uselist=False)
+
+    # User delete hoga toh Doctor bhi delete ho jayega
+    doctor = relationship(
+        "Doctor", 
+        back_populates="user", 
+        uselist=False, 
+        cascade="all, delete-orphan", 
+        single_parent=True
+    )
+
+    # User delete hoga toh Staff bhi delete ho jayega
+    staff = relationship(
+        "Staff", 
+        back_populates="user", 
+        uselist=False, 
+        cascade="all, delete-orphan", 
+        single_parent=True
+    )
