@@ -20,9 +20,18 @@ class Doctor(Base):
     # Optional relationship back to User
     user = relationship("User", back_populates="doctor")
 
-    # Cascade delete setup for patients
+    # Doctor delete hoga toh patients bhi delete ho jayegen
     patients = relationship(
         "Patient", 
         back_populates="doctor", 
         cascade="all, delete-orphan"
+    )
+
+    # Doctor delete hoga toh User bhi delete ho jayega
+    user = relationship(
+        "User", 
+        back_populates="doctor", 
+        uselist=False, 
+        cascade="all, delete-orphan", 
+        single_parent=True
     )
