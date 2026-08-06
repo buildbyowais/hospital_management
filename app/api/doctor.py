@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status,Query
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -122,24 +122,47 @@ def create(
 
 @router.get("/", response_model=list[DoctorResponse])
 def read_all(
+    search: str | None = None,
+    specialization: str | None = None,
+    skip: int = 0,
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(["admin", "doctor", "staff"]))
+    current_user: User = Depends(
+        require_role(["admin"])
+    )
 ):
-    return get_doctors(db)
+    doctors = get_doctors(
+        db,
+        search=search,
+        specialization=specialization,
+        skip=skip,
+        limit=limit
+    )
 
+    if not doctors:
+        raise HTTPException(
+            status_code=404,
+            detail="Doctor not found"
+        )
+
+    return doctors
 
 @router.get("/{doctor_id}", response_model=DoctorResponse)
 def read_one(
     doctor_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(["admin", "doctor", "staff"]))
+    current_user: User = Depends(
+        require_role(["admin"])
+    )
 ):
     doctor = get_doctor(db, doctor_id)
+
     if not doctor:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=404,
             detail="Doctor not found"
         )
+
     return doctor
 
 
