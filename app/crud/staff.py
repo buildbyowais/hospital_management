@@ -20,8 +20,32 @@ def create_staff(db:Session,staff:StaffCreate):
 
     return db_staff
 
-def get_staff(db:Session):
-    return db.query(Staff).all()
+def get_staff(
+    db:Session,
+    search :str | None = None,
+    designation : str | None = None,
+    skip : int = 0,
+    limit: int = 10
+):
+    query = db.query(Staff)
+
+    #search by name
+    if search:
+        query = query.filter(
+            (Staff.name.ilike(f"%{search}%"))
+        )
+    #filter by designation
+    if designation:
+        query = query.filter(
+            Staff.designation.ilike(f"%{designation}%")
+        )
+    return(
+        query
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+   
 
 def get_staff_member(db:Session,staff_id:int):
     return(
