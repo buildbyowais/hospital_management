@@ -1,21 +1,30 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from typing import Optional
 
-class DoctorCreate(BaseModel):
-    name : str
-    gender : str
-    specialization : str
-    qualification : str
-    phone : str
-    experience : str
 
-class DoctorResponse(BaseModel):
-    id : int
-    name : str
-    gender : str
-    specialization : str
-    qualification : str
-    phone : str
-    experience : str
+class DoctorBase(BaseModel):
+    name: str
+    email: EmailStr
+    gender: str
+    specialization: str
+    qualification: str
+    phone: str
+    experience: str
+
+
+class DoctorCreate(DoctorBase):
+    pass
+
+
+class DoctorResponse(DoctorBase):
+    id: int
+    user_id: Optional[int] = None
 
     class Config:
         from_attributes = True
+
+
+class DoctorRegisterSchema(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
