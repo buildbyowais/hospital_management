@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from app.models.patient import Patient
+from app.models.doctor import Doctor
 from app.schemas.patient import PatientCreate
 
 
@@ -12,6 +14,13 @@ def create_patient(db: Session, patient: PatientCreate):
         phone=patient.phone,
         doctor_id = patient.doctor_id
     )
+    doctor = db.query(Doctor).filter(Doctor.id==patient.doctor_id).first()
+
+    if not doctor:
+        raise HTTPException(
+            status_code=404,
+            detail="Doctor id is not correct,Doctor not found!"
+        )
 
     db.add(db_patient)
     db.commit()
@@ -46,6 +55,14 @@ def update_patient(
     db_patient.gender = patient.gender
     db_patient.phone = patient.phone
     db_patient.doctor_id = patient.doctor_id
+
+    doctor = db.query(Doctor).filter(Doctor.id==patient.doctor_id).first()
+
+    if not doctor:
+            raise HTTPException(
+                status_code=404,
+                detail="Doctor id is not correct,Doctor not found!"
+            )
 
     db.commit()
     db.refresh(db_patient)
