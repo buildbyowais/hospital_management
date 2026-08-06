@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException,Depends,APIRouter,status
+from fastapi import HTTPException,Depends,APIRouter,status,Query
 
 from app.core.database import get_db
 from app.api.auth import require_role
@@ -122,10 +122,29 @@ def create(
 
 @router.get("/",response_model=list[StaffResponse])
 def read_all(
-    db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin"]))
+    search: str | None =None,
+    designation : str | None = None,
+    skip:int = 0,
+    limit:int = Query(10,ge=1,le=100),
+    db:Session = Depends(get_db),
+    current_user : User = Depends(
+        require_role(["admin"])
+    )
 ):
-    return get_staff(db)
+    staff = get_staff(
+        db,
+        search=search,
+        designation=designation,
+        skip=skip,
+        limit=limit
+    )
+
+    if not staff:
+        raise HTTPException(
+            status_code=404,
+            detail="Staff not found"
+        )
+    return staff
 
 @router.get("/{staff_id}",response_model=StaffResponse)
 def read_one(
