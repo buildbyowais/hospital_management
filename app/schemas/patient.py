@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 
 
 class PatientCreate(BaseModel):
@@ -7,6 +7,7 @@ class PatientCreate(BaseModel):
     gender: str
     phone: str
     doctor_id : int
+    email: EmailStr
 
 
 class PatientResponse(BaseModel):
@@ -19,3 +20,8 @@ class PatientResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PatientRegisterSchema(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
