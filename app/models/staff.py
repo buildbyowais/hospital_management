@@ -25,7 +25,7 @@ class Staff(Base):
 
     user = relationship("User",back_populates="staff")
 
-    # Staff delete hoga toh User bhi delete ho jayega
+    # Auto-deletes linked user account on staff deletion
     user = relationship(
         "User",
         back_populates="staff", 
