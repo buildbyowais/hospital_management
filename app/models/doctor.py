@@ -16,18 +16,16 @@ class Doctor(Base):
     experience = Column(String(100), nullable=False)
     
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True, unique=True)
-
-    # Optional relationship back to User
     user = relationship("User", back_populates="doctor")
 
-    # Doctor delete hoga toh patients bhi delete ho jayegen
+    # Auto-deletes linked patients when the doctor is deleted
     patients = relationship(
         "Patient", 
         back_populates="doctor", 
         cascade="all, delete-orphan"
     )
 
-    # Doctor delete hoga toh User bhi delete ho jayega
+    # Auto-deletes linked user account on doctor deletion
     user = relationship(
         "User", 
         back_populates="doctor", 
