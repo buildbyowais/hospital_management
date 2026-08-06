@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException,Depends,APIRouter
+from fastapi import HTTPException,Depends,APIRouter,status
 
 from app.core.database import get_db
 from app.api.auth import require_role
 from app.models.user import User
+from app.models.staff import Staff
+from app.core.security import get_password_hash
+
 
 from app.crud.staff import(
     create_staff,
@@ -15,13 +18,99 @@ from app.crud.staff import(
 
 from app.schemas.staff import(
     StaffCreate,
-    StaffResponse
+    StaffResponse,
+    StaffRegisterSchema
 )
 
 router = APIRouter(
     prefix="/staff",
     tags=["Staff"]
 )
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
+def register_staff(
+    data: StaffRegisterSchema,
+    db: Session = Depends(get_db)
+):
+    # Find existing staff profile
+    staff = (
+        db.query(Staff)
+        .filter(Staff.email.ilike(data.email))
+        .first()
+    )
+
+    if not staff:
+        raise HTTPException(
+            status_code=404,
+            detail="No staff profile found for this email. Please contact the administrator."
+        )
+
+    # Already linked?
+    if staff.user_id is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="This staff profile is already registered."
+        )
+
+    # Username already exists?
+    existing_username = (
+        db.query(User)
+        .filter(User.username == data.username)
+        .first()
+    )
+
+    if existing_username:
+        raise HTTPException(
+            status_code=400,
+            detail="Username already taken."
+        )
+
+    # Email already exists?
+    existing_email = (
+        db.query(User)
+        .filter(User.email.ilike(data.email))
+        .first()
+    )
+
+    if existing_email:
+        raise HTTPException(
+            status_code=400,
+            detail="An account with this email already exists."
+        )
+
+    try:
+        # Create staff user account
+        new_user = User(
+            username=data.username,
+            email=data.email,
+            hashed_password=get_password_hash(data.password),
+            role="staff"
+        )
+
+        db.add(new_user)
+        db.flush()
+
+        # Link staff profile with user
+        staff.user_id = new_user.id
+
+        db.commit()
+
+        db.refresh(staff)
+
+        return {
+            "message": "staff account successfully registered and linked!",
+            "user_id": new_user.id,
+            "staff_id": staff.id,
+            "role": new_user.role
+        }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Registration failed: {str(e)}"
+        )
+
 
 @router.post("/",response_model=StaffResponse)
 def create(
