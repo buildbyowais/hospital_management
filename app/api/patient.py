@@ -49,6 +49,7 @@ def read_all(
                 detail="Doctor Profile not found"
             )
         return get_patients_by_doctor(db,doctor.id)
+        
     return get_patients(db)
 
 
@@ -73,7 +74,7 @@ def update(
     patient_id: int,
     patient: PatientCreate,
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin"]))
+    current_user : User = Depends(require_role(["admin","staff"]))
 ):
     updated = update_patient(
         db,
