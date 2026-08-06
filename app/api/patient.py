@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException,status
+from fastapi import APIRouter, Depends, HTTPException,status,Query
 from sqlalchemy.orm import Session
+from typing import Optional,List
 
 from app.core.security import get_password_hash
 from app.core.database import get_db
@@ -7,6 +8,7 @@ from app.models.user import User
 from app.models.patient import Patient
 from app.api.auth import require_role
 from app.crud.doctor import get_doctor_by_user_id
+from app.crud.doctor import get_doctor
 
 from app.schemas.patient import (
     PatientCreate,
@@ -20,7 +22,6 @@ from app.crud.patient import (
     get_patient,
     update_patient,
     delete_patient,
-    get_patients_by_doctor
 )
 
 router = APIRouter(
@@ -123,27 +124,77 @@ def create(
 
 @router.get("/", response_model=list[PatientResponse])
 def read_all(
+    search: str | None = None,
+    doctor_id: int | None = None,
+    skip: int = 0,
+    limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin","doctor","staff"]))
+    current_user: User = Depends(
+        require_role(["admin", "doctor", "staff"])
+    )
 ):
+    # DOCTOR
     if current_user.role == "doctor":
-        doctor = get_doctor_by_user_id(db,current_user.id)
+
+        doctor = get_doctor_by_user_id(db, current_user.id)
 
         if not doctor:
             raise HTTPException(
                 status_code=404,
                 detail="Doctor Profile not found"
             )
-        return get_patients_by_doctor(db,doctor.id)
-        
-    return get_patients(db)
+
+        # Doctor tries another doctor_id
+        if doctor_id is not None and doctor_id != doctor.id:
+
+            requested_doctor = get_doctor(db, doctor_id)
+
+            if not requested_doctor:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Doctor Profile not found"
+                )
+
+            raise HTTPException(
+                status_code=403,
+                detail="You can only access your own assigned patients"
+            )
+
+        patients = get_patients(
+            db,
+            search=search,
+            doctor_id=doctor.id,
+            skip=skip,
+            limit=limit
+        )
+
+    # ADMIN / STAFF
+    else:
+        patients = get_patients(
+            db,
+            search=search,
+            doctor_id=doctor_id,
+            skip=skip,
+            limit=limit
+        )
+
+    # No patients found
+    if not patients:
+        raise HTTPException(
+            status_code=404,
+            detail="Patient not found"
+        )
+
+    return patients
 
 
 @router.get("/{patient_id}", response_model=PatientResponse)
 def read_one(
     patient_id: int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin","doctor","staff"]))
+    current_user: User = Depends(
+        require_role(["admin", "doctor", "staff"])
+    )
 ):
     patient = get_patient(db, patient_id)
 
@@ -152,6 +203,24 @@ def read_one(
             status_code=404,
             detail="Patient not found"
         )
+
+    # DOCTOR
+    if current_user.role == "doctor":
+
+        doctor = get_doctor_by_user_id(db, current_user.id)
+
+        if not doctor:
+            raise HTTPException(
+                status_code=404,
+                detail="Doctor Profile not found"
+            )
+
+        # Patient belongs to another doctor
+        if patient.doctor_id != doctor.id:
+            raise HTTPException(
+                status_code=403,
+                detail="You can only access your assigned patients!"
+            )
 
     return patient
 
