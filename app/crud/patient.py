@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from typing import Optional
 
 from app.models.patient import Patient
 from app.models.doctor import Doctor
@@ -30,8 +31,22 @@ def create_patient(db: Session, patient: PatientCreate):
     return db_patient
 
 
-def get_patients(db: Session):
-    return db.query(Patient).all()
+def get_patients(
+    db: Session, 
+    search: Optional[str] = None, 
+    doctor_id: Optional[int] = None, 
+    skip: int = 0, 
+    limit: int = 10
+):
+    query = db.query(Patient)
+
+    if doctor_id is not None:
+        query = query.filter(Patient.doctor_id == doctor_id)
+
+    if search:
+        query = query.filter(Patient.name.ilike(f"%{search}%"))
+
+    return query.offset(skip).limit(limit).all()
 
 
 def get_patient(db: Session, patient_id: int):
