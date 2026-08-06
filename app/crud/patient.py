@@ -12,7 +12,8 @@ def create_patient(db: Session, patient: PatientCreate):
         age=patient.age,
         gender=patient.gender,
         phone=patient.phone,
-        doctor_id = patient.doctor_id
+        doctor_id = patient.doctor_id,
+        email =  patient.email
     )
     doctor = db.query(Doctor).filter(Doctor.id==patient.doctor_id).first()
 
@@ -55,7 +56,8 @@ def update_patient(
     db_patient.gender = patient.gender
     db_patient.phone = patient.phone
     db_patient.doctor_id = patient.doctor_id
-
+    db_patient.email = patient.email
+    
     doctor = db.query(Doctor).filter(Doctor.id==patient.doctor_id).first()
 
     if not doctor:
