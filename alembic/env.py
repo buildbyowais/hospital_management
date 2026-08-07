@@ -12,6 +12,7 @@ from app.models.staff import Staff
 from app.models.user import User
 from app.models.appointment import Appointment
 from app.models.prescription import Prescription
+from app.models.report import PatientReport
 
 import os
 
