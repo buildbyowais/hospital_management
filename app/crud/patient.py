@@ -107,3 +107,13 @@ def get_patients_by_doctor(db:Session,doctor_id:int):
         .filter(Patient.doctor_id == doctor_id)
         .all()
     )
+
+def get_patient_by_user_id(
+    db: Session,
+    user_id: int
+):
+    return (
+        db.query(Patient)
+        .filter(Patient.user_id == user_id)
+        .first()
+    )
