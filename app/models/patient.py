@@ -55,4 +55,10 @@ class Patient(Base):
         back_populates="patient",
         cascade="all,delete-orphan"
     )
+    # Patient ↔ Reports
+    reports = relationship(
+        "PatientReport",
+        back_populates="patient",
+        cascade="all, delete-orphan"
+    )
     
