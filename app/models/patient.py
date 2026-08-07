@@ -49,4 +49,10 @@ class Patient(Base):
         back_populates="patient",
         cascade="all, delete-orphan"
     )
+    # Patient ↔ Prescription
+    prescriptions = relationship(
+        "Prescription",
+        back_populates="patient",
+        cascade="all,delete-orphan"
+    )
     
