@@ -10,6 +10,7 @@ from app.models.patient import Patient
 from app.models.doctor import Doctor
 from app.models.staff import Staff
 from app.models.user import User
+from app.models.appointment import Appointment
 
 import os
 
