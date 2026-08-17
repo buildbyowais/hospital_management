@@ -16,7 +16,9 @@ from app.crud.appointment import (
     get_appointment,
     get_appointments_by_doctor,
     get_appointments_by_patient,
-    update_appointment_status
+    update_appointment_status,
+    get_all_appointments
+
 )
 
 from app.crud.patient import get_patient_by_user_id
@@ -37,19 +39,33 @@ router = APIRouter(
 def request_appointment(
     appointment: AppointmentCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(["patient", "admin"]))
+    current_user: User = Depends(
+        require_role(["patient", "admin"])
+    )
 ):
     if current_user.role == "patient":
-        patient = get_patient_by_user_id(db, current_user.id)
+
+        patient = get_patient_by_user_id(
+            db,
+            current_user.id
+        )
+
         if not patient:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Patient profile not found for this user"
             )
-        
+
         final_patient_id = patient.id
 
     else:
+
+        if appointment.patient_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Patient ID is required for admin appointment requests"
+            )
+
         final_patient_id = appointment.patient_id
 
     return create_patient_appointment(
@@ -57,7 +73,6 @@ def request_appointment(
         patient_id=final_patient_id,
         appointment=appointment
     )
-
 
 @router.get(
     "/doctor",
@@ -93,6 +108,20 @@ def doctor_appointments(
 
     return appointments
 
+@router.get(
+    "/admin",
+    response_model=list[AppointmentResponse]
+)
+def admin_appointments(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_role(["admin"])
+    )
+):
+    appointments = get_all_appointments(db)
+    
+    # Return empty list instead of 404
+    return appointments
 @router.get(
     "/patient",
     response_model=list[AppointmentResponse]
