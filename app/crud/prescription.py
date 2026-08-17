@@ -110,3 +110,7 @@ def delete_prescription(
     db.commit()
 
     return prescription
+
+def get_all_prescriptions(db: Session):
+    """Get all prescriptions (admin only)"""
+    return db.query(Prescription).all()
