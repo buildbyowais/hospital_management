@@ -1,14 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException,status,Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import Optional,List
 
 from app.core.security import get_password_hash
 from app.core.database import get_db
+
 from app.models.user import User
 from app.models.patient import Patient
-from app.api.auth import require_role
-from app.crud.doctor import get_doctor_by_user_id
-from app.crud.doctor import get_doctor
+
+from app.api.auth import require_role, get_current_user
+
+from app.crud.doctor import (
+    get_doctor_by_user_id,
+    get_doctor
+)
 
 from app.schemas.patient import (
     PatientCreate,
@@ -24,40 +28,52 @@ from app.crud.patient import (
     delete_patient,
 )
 
+
 router = APIRouter(
     prefix="/patients",
     tags=["Patients"]
 )
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    status_code=status.HTTP_201_CREATED
+)
 def register_patient(
     data: PatientRegisterSchema,
     db: Session = Depends(get_db)
 ):
+
     # Find existing patient profile
     patient = (
         db.query(Patient)
-        .filter(Patient.email.ilike(data.email))
+        .filter(
+            Patient.email.ilike(data.email)
+        )
         .first()
     )
 
     if not patient:
         raise HTTPException(
             status_code=404,
-            detail="No patient profile found for this email. Please contact the administrator."
+            detail=(
+                "No patient profile found for this email. "
+                "Please contact the administrator."
+            )
         )
 
-    # Already linked?
+    # Already linked
     if patient.user_id is not None:
         raise HTTPException(
             status_code=400,
             detail="This patient profile is already registered."
         )
 
-    # Username already exists?
+    # Username already exists
     existing_username = (
         db.query(User)
-        .filter(User.username == data.username)
+        .filter(
+            User.username == data.username
+        )
         .first()
     )
 
@@ -67,10 +83,12 @@ def register_patient(
             detail="Username already taken."
         )
 
-    # Email already exists?
+    # Email already exists
     existing_email = (
         db.query(User)
-        .filter(User.email.ilike(data.email))
+        .filter(
+            User.email.ilike(data.email)
+        )
         .first()
     )
 
@@ -81,18 +99,22 @@ def register_patient(
         )
 
     try:
-        # Create patient user account
+
+        # Create user account
         new_user = User(
             username=data.username,
             email=data.email,
-            hashed_password=get_password_hash(data.password),
+            hashed_password=get_password_hash(
+                data.password
+            ),
             role="patient"
         )
 
         db.add(new_user)
+
         db.flush()
 
-        # Link patient profile with user
+        # Link patient profile to user
         patient.user_id = new_user.id
 
         db.commit()
@@ -100,64 +122,141 @@ def register_patient(
         db.refresh(patient)
 
         return {
-            "message": "Patient account successfully registered and linked!",
+            "message": (
+                "Patient account successfully "
+                "registered and linked!"
+            ),
             "user_id": new_user.id,
             "patient_id": patient.id,
             "role": new_user.role
         }
 
     except Exception as e:
+
         db.rollback()
+
         raise HTTPException(
             status_code=500,
             detail=f"Registration failed: {str(e)}"
         )
 
-@router.post("/", response_model=PatientResponse)
+
+
+
+@router.post(
+    "/",
+    response_model=PatientResponse
+)
 def create(
     patient: PatientCreate,
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin","staff"]))
+    current_user: User = Depends(
+        require_role(["admin", "staff"])
+    )
 ):
-    return create_patient(db, patient)
+
+    return create_patient(
+        db,
+        patient
+    )
 
 
-@router.get("/", response_model=list[PatientResponse])
+@router.get(
+    "/me",
+    response_model=PatientResponse
+)
+def get_my_patient(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    # Make sure logged-in user is a patient
+    if current_user.role != "patient":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Only patients can access this endpoint."
+        )
+
+    patient = (
+        db.query(Patient)
+        .filter(
+            Patient.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not patient:
+
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Patient profile not found "
+                "for this user."
+            )
+        )
+
+    return patient
+
+
+@router.get(
+    "/",
+    response_model=list[PatientResponse]
+)
 def read_all(
     search: str | None = None,
     doctor_id: int | None = None,
     skip: int = 0,
-    limit: int = Query(10, ge=1, le=100),
+    limit: int = Query(
+        10,
+        ge=1,
+        le=100
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(
-        require_role(["admin", "doctor", "staff"])
+        require_role(
+            ["admin", "doctor", "staff"]
+        )
     )
 ):
-    # DOCTOR
     if current_user.role == "doctor":
 
-        doctor = get_doctor_by_user_id(db, current_user.id)
+        doctor = get_doctor_by_user_id(
+            db,
+            current_user.id
+        )
 
         if not doctor:
+
             raise HTTPException(
                 status_code=404,
-                detail="Doctor Profile not found"
+                detail="Doctor Profile not found."
             )
 
-        # Doctor tries another doctor_id
-        if doctor_id is not None and doctor_id != doctor.id:
+        # Doctor cannot request another doctor's patients
+        if (
+            doctor_id is not None
+            and doctor_id != doctor.id
+        ):
 
-            requested_doctor = get_doctor(db, doctor_id)
+            requested_doctor = get_doctor(
+                db,
+                doctor_id
+            )
 
             if not requested_doctor:
+
                 raise HTTPException(
                     status_code=404,
-                    detail="Doctor Profile not found"
+                    detail="Doctor Profile not found."
                 )
 
             raise HTTPException(
                 status_code=403,
-                detail="You can only access your own assigned patients"
+                detail=(
+                    "You can only access your "
+                    "own assigned patients."
+                )
             )
 
         patients = get_patients(
@@ -168,8 +267,8 @@ def read_all(
             limit=limit
         )
 
-    # ADMIN / STAFF
     else:
+
         patients = get_patients(
             db,
             search=search,
@@ -178,59 +277,80 @@ def read_all(
             limit=limit
         )
 
-    # No patients found
-    if not patients:
-        raise HTTPException(
-            status_code=404,
-            detail="Patient not found"
-        )
-
     return patients
 
 
-@router.get("/{patient_id}", response_model=PatientResponse)
+@router.get(
+    "/{patient_id}",
+    response_model=PatientResponse
+)
 def read_one(
     patient_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(
-        require_role(["admin", "doctor", "staff"])
+        require_role(
+            ["admin", "doctor", "staff"]
+        )
     )
 ):
-    patient = get_patient(db, patient_id)
+
+    patient = get_patient(
+        db,
+        patient_id
+    )
 
     if not patient:
+
         raise HTTPException(
             status_code=404,
-            detail="Patient not found"
+            detail="Patient not found."
         )
 
-    # DOCTOR
+    # =====================================================
+    # DOCTOR ACCESS CONTROL
+    # =====================================================
+
     if current_user.role == "doctor":
 
-        doctor = get_doctor_by_user_id(db, current_user.id)
+        doctor = get_doctor_by_user_id(
+            db,
+            current_user.id
+        )
 
         if not doctor:
+
             raise HTTPException(
                 status_code=404,
-                detail="Doctor Profile not found"
+                detail="Doctor Profile not found."
             )
 
-        # Patient belongs to another doctor
         if patient.doctor_id != doctor.id:
+
             raise HTTPException(
                 status_code=403,
-                detail="You can only access your assigned patients!"
+                detail=(
+                    "You can only access your "
+                    "assigned patients."
+                )
             )
 
     return patient
 
-@router.put("/{patient_id}", response_model=PatientResponse)
+
+
+@router.put(
+    "/{patient_id}",
+    response_model=PatientResponse
+)
 def update(
     patient_id: int,
     patient: PatientCreate,
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin","staff"]))
+    current_user: User = Depends(
+        require_role(["admin", "staff"])
+    )
 ):
+
     updated = update_patient(
         db,
         patient_id,
@@ -238,31 +358,40 @@ def update(
     )
 
     if not updated:
+
         raise HTTPException(
             status_code=404,
-            detail="Patient not found"
+            detail="Patient not found."
         )
 
     return updated
 
 
-@router.delete("/{patient_id}")
+
+
+@router.delete(
+    "/{patient_id}"
+)
 def delete(
     patient_id: int,
     db: Session = Depends(get_db),
-    current_user : User = Depends(require_role(["admin"]))
+    current_user: User = Depends(
+        require_role(["admin"])
+    )
 ):
+
     deleted = delete_patient(
         db,
         patient_id
     )
 
     if not deleted:
+
         raise HTTPException(
             status_code=404,
-            detail="Patient not found"
+            detail="Patient not found."
         )
 
     return {
-        "message": "Patient deleted successfully"
+        "message": "Patient deleted successfully."
     }
