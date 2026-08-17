@@ -104,3 +104,15 @@ def update_appointment_status(
     db.refresh(appointment)
 
     return appointment
+
+def get_all_appointments(
+    db: Session
+):
+    return (
+        db.query(Appointment)
+        .order_by(
+            Appointment.appointment_date,
+            Appointment.appointment_time
+        )
+        .all()
+    )
