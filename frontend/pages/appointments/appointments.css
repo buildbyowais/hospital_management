@@ -1,0 +1,465 @@
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.page-header p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+/* BUTTONS */
+
+.primary-btn {
+    height: 42px;
+    padding: 0 17px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: var(--navy);
+    color: white;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    cursor: pointer;
+}
+
+.primary-btn:hover {
+    background: var(--navy-light);
+}
+
+.primary-btn:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.secondary-btn {
+    height: 42px;
+    padding: 0 17px;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    background: white;
+    color: var(--text);
+
+    font-family: inherit;
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+
+/* STATS */
+
+.appointment-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 17px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #e9f3f4;
+    color: var(--teal);
+
+    font-size: 18px;
+}
+
+.stat-icon.scheduled {
+    background: #f7f0df;
+    color: #a17b24;
+}
+
+.stat-icon.confirmed {
+    background: #e8f3ef;
+    color: #28765d;
+}
+
+.stat-icon.completed {
+    background: #e9eef6;
+    color: #48698e;
+}
+
+.stat-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.stat-card strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 20px;
+    color: var(--navy);
+}
+
+
+/* MESSAGE */
+
+.message-box {
+    padding: 12px 15px;
+    border-radius: 7px;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.message-success {
+    background: #e9f6f1;
+    color: #16664f;
+    border: 1px solid #cceadd;
+}
+
+.message-error {
+    background: #fceeed;
+    color: #9a3a31;
+    border: 1px solid #f2d0cc;
+}
+
+
+/* DATA CARD */
+
+.data-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.data-card-header {
+    padding: 20px;
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data-card-header h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.data-card-header span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.refresh-btn {
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid var(--border);
+    background: white;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.refresh-btn:hover {
+    color: var(--teal);
+    border-color: var(--teal);
+}
+
+
+/* TABLE */
+
+.appointment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.appointment-table th {
+    padding: 13px 15px;
+
+    background: #f8fafb;
+    border-bottom: 1px solid var(--border);
+
+    color: var(--muted);
+
+    text-align: left;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.appointment-table td {
+    padding: 14px 15px;
+    border-bottom: 1px solid #edf1f3;
+    vertical-align: middle;
+}
+
+.appointment-table tbody tr:hover {
+    background: #fafcfc;
+}
+
+.appointment-id {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.reason {
+    max-width: 180px;
+    color: var(--muted);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.patient-name,
+.doctor-name {
+    font-weight: 600;
+}
+
+.status-badge {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.status-scheduled {
+    background: #f7f0df;
+    color: #96711f;
+}
+
+.status-confirmed {
+    background: #e8f3ef;
+    color: #28765d;
+}
+
+.status-completed {
+    background: #e9eef6;
+    color: #48698e;
+}
+
+.status-cancelled {
+    background: #fceeed;
+    color: #a0443c;
+}
+
+.status-no-show {
+    background: #eeeeee;
+    color: #666;
+}
+
+.action-btn {
+    height: 31px;
+
+    padding: 0 9px;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    background: white;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    color: var(--teal);
+    border-color: var(--teal);
+}
+
+
+/* LOADING */
+
+.table-loading {
+    height: 180px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.table-loading .spinner-border {
+    width: 20px;
+    height: 20px;
+
+    display: block;
+
+    margin: 0 auto 10px;
+}
+
+
+/* MODALS */
+
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h5 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 17px;
+}
+
+.modal-header small {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.modal-body {
+    padding: 22px;
+}
+
+.modal-footer {
+    padding: 15px 22px;
+    border-top: 1px solid var(--border);
+}
+
+
+/* FORM */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-field {
+    margin-bottom: 16px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 7px;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+
+    padding: 10px 11px;
+
+    border: 1px solid var(--border);
+    border-radius: 7px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.form-field input,
+.form-field select {
+    height: 42px;
+}
+
+.form-field textarea {
+    resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    border-color: var(--teal);
+    box-shadow:
+        0 0 0 3px rgba(22, 140, 136, .08);
+}
+
+.modal-error {
+    padding: 10px;
+
+    background: #fceeed;
+    color: #9a3a31;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .appointment-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .appointment-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+}
