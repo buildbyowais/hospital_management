@@ -114,3 +114,13 @@ def delete_prescription(
 def get_all_prescriptions(db: Session):
     """Get all prescriptions (admin only)"""
     return db.query(Prescription).all()
+
+def update_prescription(db: Session, prescription_id: int, update_data):
+    prescription = db.query(Prescription).filter(Prescription.id == prescription_id).first()
+    if not prescription:
+        return None
+    for key, value in update_data.dict(exclude_unset=True).items():
+        setattr(prescription, key, value)
+    db.commit()
+    db.refresh(prescription)
+    return prescription
