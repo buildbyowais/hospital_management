@@ -176,7 +176,7 @@ def doctor_reports(
     doctor = get_doctor_by_user_id(
         db,
         current_user.id
-    )
+    )   
 
     if not doctor:
         raise HTTPException(
