@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Dashboard | MediCore</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+    
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="staff-dashboard.css"
+    >
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">
+                <i class="bi bi-hospital"></i>
+            </div>
+            <div>
+                <div class="brand-title">
+                    MediCore
+                </div>
+                <div class="brand-subtitle">
+                    Staff Portal
+                </div>
+            </div>
+        </div>
+
+
+        <div class="staff-profile">
+
+            <div class="profile-avatar" id="sidebarAvatar">
+                ST
+            </div>
+
+            <div>
+                <div
+                    class="staff-name"
+                    id="sidebarUsername"
+                >
+                    Staff
+                </div>
+
+                <div class="staff-role">
+                    Staff Member
+                </div>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <button
+                class="nav-item active"
+                data-section="overview"
+            >
+                <i class="bi bi-grid-1x2-fill"></i>
+                Dashboard
+            </button>
+
+            <button
+                class="nav-item"
+                data-section="patients"
+            >
+                <i class="bi bi-people-fill"></i>
+                Patients
+            </button>
+
+            <button
+                class="nav-item"
+                data-section="appointments"
+            >
+                <i class="bi bi-calendar2-check-fill"></i>
+                Appointments
+            </button>
+
+            <button
+                class="nav-item"
+                data-section="reports"
+            >
+                <i class="bi bi-file-earmark-medical-fill"></i>
+                Medical Reports
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="logout-btn"
+                id="logoutBtn"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="page-label">
+                    Staff Portal
+                </div>
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+            </div>
+
+
+            <div class="topbar-user">
+
+                <strong id="topUsername">
+                    Staff
+                </strong>
+
+                <span class="role-badge">
+                    STAFF
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================================= -->
+        <!-- OVERVIEW -->
+        <!-- ================================= -->
+
+        <section
+            id="overview"
+            class="dashboard-section active-section"
+        >
+
+            <div class="welcome-section">
+
+                <div>
+
+                    <p class="section-label">
+                        STAFF WORKSTATION
+                    </p>
+
+                    <h2>
+                        Welcome back,
+                        <span id="welcomeUsername">
+                            Staff
+                        </span>
+                    </h2>
+
+                    <p>
+                        Manage patient records, appointment
+                        statuses and medical reports.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STAT CARDS -->
+
+            <div class="row g-4 mt-1">
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Patient Records
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="patientCount"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            Available patient records
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Medical Reports
+                        </div>
+
+                        <div
+                            class="stat-value"
+                            id="reportCount"
+                        >
+                            0
+                        </div>
+
+                        <div class="stat-description">
+                            Hospital reports
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Appointment Operations
+                        </div>
+
+                        <div class="stat-value">
+                            Active
+                        </div>
+
+                        <div class="stat-description">
+                            Status management available
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACCESS -->
+
+            <div class="content-card mt-4">
+
+                <div class="card-header-custom">
+
+                    <div>
+
+                        <h3>
+                            Staff Operations
+                        </h3>
+
+                        <p>
+                            Frequently used hospital operations
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-grid">
+
+                    <button
+                        class="quick-card"
+                        data-section="patients"
+                    >
+
+                        <span>
+                            Patient Management
+                        </span>
+
+                        <small>
+                            Search, register and update patient records
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="quick-card"
+                        data-section="appointments"
+                    >
+
+                        <span>
+                            Appointment Management
+                        </span>
+
+                        <small>
+                            Update appointment statuses
+                        </small>
+
+                    </button>
+
+
+                    <button
+                        class="quick-card"
+                        data-section="reports"
+                    >
+
+                        <span>
+                            Medical Reports
+                        </span>
+
+                        <small>
+                            View and download patient reports
+                        </small>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================= -->
+        <!-- PATIENTS -->
+        <!-- ================================= -->
+
+        <section
+            id="patients"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        PATIENT MANAGEMENT
+                    </p>
+
+                    <h2>
+                        Patient Directory
+                    </h2>
+
+                    <p>
+                        Search, register and update patient records.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-btn"
+                    id="loadPatientsBtn"
+                >
+
+                    <span
+                        class="spinner-border spinner-border-sm d-none"
+                        id="patientsSpinner"
+                    ></span>
+
+                    <span id="patientsBtnText">
+                        Search Patients
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="content-card mb-4">
+
+                <div class="row g-3">
+
+                    <div class="col-md-5">
+
+                        <label>
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="patientSearch"
+                            placeholder="Name or email"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label>
+                            Doctor ID
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="doctorFilter"
+                            min="0"
+                            placeholder="0 = any"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <label>
+                            Skip
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="patientSkip"
+                            min="0"
+                            value="0"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <label>
+                            Limit
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="patientLimit"
+                            min="1"
+                            max="100"
+                            value="10"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="patientsError"
+                    class="alert alert-danger d-none mt-3"
+                ></div>
+
+            </div>
+
+
+            <!-- PATIENT LIST -->
+
+            <div
+                id="patientsContainer"
+                class="content-card"
+            >
+
+                <div class="empty-state">
+                    Use the search controls to load patients.
+                </div>
+
+            </div>
+
+
+            <!-- REGISTER PATIENT -->
+
+            <div class="content-card mt-4">
+
+                <div class="card-header-custom">
+
+                    <div>
+
+                        <h3>
+                            Register New Patient
+                        </h3>
+
+                        <p>
+                            Create a new patient profile.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="createPatientForm">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="patientName"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="patientEmail"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Age
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="patientAge"
+                                min="0"
+                                max="130"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Gender
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="patientGender"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Gender
+                                </option>
+
+                                <option value="Male">
+                                    Male
+                                </option>
+
+                                <option value="Female">
+                                    Female
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Assigned Doctor ID
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="patientDoctorId"
+                                min="1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Phone
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="patientPhone"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="createPatientError"
+                        class="alert alert-danger d-none mt-3"
+                    ></div>
+
+
+                    <div
+                        id="createPatientSuccess"
+                        class="alert alert-success d-none mt-3"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn mt-3"
+                        id="createPatientBtn"
+                    >
+
+                        <span
+                            class="spinner-border spinner-border-sm d-none"
+                            id="createPatientSpinner"
+                        ></span>
+
+                        <span id="createPatientBtnText">
+                            Register Patient
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- UPDATE PATIENT -->
+
+            <div class="content-card mt-4">
+
+                <div class="card-header-custom">
+
+                    <div>
+
+                        <h3>
+                            Update Patient
+                        </h3>
+
+                        <p>
+                            Modify an existing patient record.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label>
+                            Patient ID
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="editPatientId"
+                            min="1"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <button
+                            class="secondary-btn"
+                            id="loadPatientBtn"
+                        >
+
+                            <span
+                                class="spinner-border spinner-border-sm d-none"
+                                id="loadPatientSpinner"
+                            ></span>
+
+                            Load Patient
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="editPatientError"
+                    class="alert alert-danger d-none mt-3"
+                ></div>
+
+
+                <form
+                    id="updatePatientForm"
+                    class="d-none mt-4"
+                >
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="editName"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="editEmail"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Age
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="editAge"
+                                min="0"
+                                max="130"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Gender
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="editGender"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label>
+                                Assigned Doctor ID
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="editDoctorId"
+                                min="1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label>
+                                Phone
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="editPhone"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="updatePatientError"
+                        class="alert alert-danger d-none mt-3"
+                    ></div>
+
+
+                    <div
+                        id="updatePatientSuccess"
+                        class="alert alert-success d-none mt-3"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="primary-btn mt-3"
+                        id="updatePatientBtn"
+                    >
+
+                        <span
+                            class="spinner-border spinner-border-sm d-none"
+                            id="updatePatientSpinner"
+                        ></span>
+
+                        <span id="updatePatientBtnText">
+                            Save Changes
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================= -->
+        <!-- APPOINTMENTS -->
+        <!-- ================================= -->
+
+        <section
+            id="appointments"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        APPOINTMENT OPERATIONS
+                    </p>
+
+                    <h2>
+                        Appointment Status
+                    </h2>
+
+                    <p>
+                        Staff can update the status of hospital appointments.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="content-card">
+
+                <div class="card-header-custom">
+
+                    <div>
+
+                        <h3>
+                            Update Appointment
+                        </h3>
+
+                        <p>
+                            Change the current appointment status.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="appointmentStatusForm">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-5">
+
+                            <label>
+                                Appointment ID
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="appointmentId"
+                                min="1"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-5">
+
+                            <label>
+                                New Status
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="appointmentStatus"
+                                required
+                            >
+
+                                <option value="Scheduled">
+                                    Scheduled
+                                </option>
+
+                                <option value="Confirmed">
+                                    Confirmed
+                                </option>
+
+                                <option value="Completed">
+                                    Completed
+                                </option>
+
+                                <option value="Cancelled">
+                                    Cancelled
+                                </option>
+
+                                <option value="No Show">
+                                    No Show
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-2 d-flex align-items-end">
+
+                            <button
+                                type="submit"
+                                class="primary-btn w-100"
+                                id="updateAppointmentBtn"
+                            >
+
+                                <span
+                                    class="spinner-border spinner-border-sm d-none"
+                                    id="appointmentSpinner"
+                                ></span>
+
+                                Update
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="appointmentError"
+                        class="alert alert-danger d-none mt-3"
+                    ></div>
+
+
+                    <div
+                        id="appointmentSuccess"
+                        class="alert alert-success d-none mt-3"
+                    ></div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================= -->
+        <!-- REPORTS -->
+        <!-- ================================= -->
+
+        <section
+            id="reports"
+            class="dashboard-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        MEDICAL DOCUMENTS
+                    </p>
+
+                    <h2>
+                        Patient Reports
+                    </h2>
+
+                    <p>
+                        View and download hospital patient reports.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-btn"
+                    id="loadReportsBtn"
+                >
+
+                    <span
+                        class="spinner-border spinner-border-sm d-none"
+                        id="reportsSpinner"
+                    ></span>
+
+                    <span id="reportsBtnText">
+                        Load Reports
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="reportsError"
+                class="alert alert-danger d-none"
+            ></div>
+
+
+            <div
+                id="reportsContainer"
+                class="content-card"
+            >
+
+                <div class="empty-state">
+                    Select "Load Reports" to view medical reports.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="staff-dashboard.js"></script>
+
+</body>
+</html>
