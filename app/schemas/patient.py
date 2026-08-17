@@ -17,6 +17,7 @@ class PatientResponse(BaseModel):
     gender: str
     phone: str
     doctor_id : int
+    email: EmailStr
 
     class Config:
         from_attributes = True
