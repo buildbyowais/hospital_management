@@ -18,6 +18,7 @@ class StaffResponse(BaseModel):
     department : str
     phone : str
     salary : int
+    email : EmailStr
     user_id: Optional[int] = None
 
     class Config:
