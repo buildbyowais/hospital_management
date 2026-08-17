@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-
+from typing import Optional
+from sqlalchemy import or_
 from app.core.database import get_db
 from app.api.auth import require_role
 from app.models.user import User
+from app.models.prescription import Prescription
 
 from app.schemas.prescription import (
     PrescriptionCreate,
@@ -59,6 +61,38 @@ def create(
     )
 
 
+# Admin sees all prescriptions (VIEW ONLY)
+@router.get(
+    "/admin",
+    response_model=list[PrescriptionResponse]
+)
+def admin_prescriptions(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    search: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_role(["admin"])
+    )
+):
+    # Build the query
+    query = db.query(Prescription)
+    
+    # Apply search filter if provided
+    if search:
+        query = query.filter(
+            or_(
+                Prescription.medicine_name.ilike(f"%{search}%"),
+                Prescription.dosage.ilike(f"%{search}%")
+            )
+        )
+    
+    # Apply pagination
+    prescriptions = query.offset(skip).limit(limit).all()
+    
+    return prescriptions
+
+
 # Patient sees only own prescriptions
 @router.get(
     "/my",
@@ -86,13 +120,7 @@ def my_prescriptions(
         patient.id
     )
 
-    if not prescriptions:
-        raise HTTPException(
-            status_code=404,
-            detail="No prescriptions found"
-        )
-
-    return prescriptions
+    return prescriptions if prescriptions else []
 
 
 # Doctor sees prescriptions created by him
@@ -122,16 +150,10 @@ def doctor_prescriptions(
         doctor.id
     )
 
-    if not prescriptions:
-        raise HTTPException(
-            status_code=404,
-            detail="No prescriptions found"
-        )
-
-    return prescriptions
+    return prescriptions if prescriptions else []
 
 
-# Admin / Staff can view a prescription
+# View single prescription
 @router.get(
     "/{prescription_id}",
     response_model=PrescriptionResponse
@@ -154,9 +176,12 @@ def read_one(
             detail="Prescription not found"
         )
 
+    # Admin can view any prescription
+    if current_user.role == "admin":
+        return prescription
+
     # Doctor restriction
     if current_user.role == "doctor":
-
         doctor = get_doctor_by_user_id(
             db,
             current_user.id
@@ -176,7 +201,6 @@ def read_one(
 
     # Patient restriction
     if current_user.role == "patient":
-
         patient = get_patient_by_user_id(
             db,
             current_user.id
@@ -197,13 +221,15 @@ def read_one(
     return prescription
 
 
-# Admin deletes prescription
-@router.delete("/{prescription_id}")
+# Admin deletes prescription (Optional - remove if admin shouldn't delete)
+@router.delete(
+    "/{prescription_id}"
+)
 def delete(
     prescription_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(
-        require_role(["admin"])
+        require_role(["doctor"])
     )
 ):
     deleted = delete_prescription(
