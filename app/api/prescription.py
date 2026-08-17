@@ -9,7 +9,8 @@ from app.models.prescription import Prescription
 
 from app.schemas.prescription import (
     PrescriptionCreate,
-    PrescriptionResponse
+    PrescriptionResponse,
+    PrescriptionUpdate  # <-- NEW SCHEMA ADD KARNA
 )
 
 from app.crud.prescription import (
@@ -17,7 +18,8 @@ from app.crud.prescription import (
     get_prescription,
     get_prescriptions_by_patient,
     get_prescriptions_by_doctor,
-    delete_prescription
+    delete_prescription,
+    update_prescription  # <-- NEW CRUD FUNCTION
 )
 
 from app.crud.patient import get_patient_by_user_id
@@ -75,10 +77,8 @@ def admin_prescriptions(
         require_role(["admin"])
     )
 ):
-    # Build the query
     query = db.query(Prescription)
     
-    # Apply search filter if provided
     if search:
         query = query.filter(
             or_(
@@ -87,7 +87,6 @@ def admin_prescriptions(
             )
         )
     
-    # Apply pagination
     prescriptions = query.offset(skip).limit(limit).all()
     
     return prescriptions
@@ -151,6 +150,45 @@ def doctor_prescriptions(
     )
 
     return prescriptions if prescriptions else []
+
+
+@router.put(
+    "/{prescription_id}",
+    response_model=PrescriptionResponse
+)
+def edit_prescription(
+    prescription_id: int,
+    prescription_update: PrescriptionUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(
+        require_role(["doctor"])
+    )
+):
+    # 1. Check if prescription exists
+    prescription = get_prescription(db, prescription_id)
+    if not prescription:
+        raise HTTPException(
+            status_code=404,
+            detail="Prescription not found"
+        )
+
+    # 2. Verify this doctor owns this prescription
+    doctor = get_doctor_by_user_id(db, current_user.id)
+    if not doctor:
+        raise HTTPException(
+            status_code=404,
+            detail="Doctor profile not found"
+        )
+
+    if prescription.doctor_id != doctor.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You can only edit your own prescriptions"
+        )
+
+    # 3. Update the prescription
+    updated = update_prescription(db, prescription_id, prescription_update)
+    return updated
 
 
 # View single prescription
@@ -221,7 +259,7 @@ def read_one(
     return prescription
 
 
-# Admin deletes prescription (Optional - remove if admin shouldn't delete)
+# doctor deletes prescription
 @router.delete(
     "/{prescription_id}"
 )
