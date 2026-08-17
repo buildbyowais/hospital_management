@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCore | Welcome</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Tumhara EXACT Theme CSS (Yahan path sahi karo) -->
+    <link rel="stylesheet" href="style.css"> 
+    
+    <!-- Landing Page Specific CSS -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #eef3f6 0%, #e8f1f1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Inter", sans-serif;
+            margin: 0;
+        }
+
+        .splash-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(11, 36, 56, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Creative Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--navy, #0b2438);
+            color: white;
+            font-size: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 25px rgba(11, 36, 56, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .splash-icon:hover {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .splash-title {
+            color: var(--navy, #0b2438);
+            font-size: 38px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .splash-subtitle {
+            color: var(--muted, #71808c);
+            font-size: 14px;
+            margin: 8px 0 35px 0;
+            font-weight: 500;
+        }
+
+        .splash-btn {
+            background: var(--navy, #0b2438);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(11, 36, 56, 0.2);
+        }
+
+        .splash-btn:hover {
+            background: var(--navy-light, #123b58);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(11, 36, 56, 0.3);
+            color: white;
+        }
+
+        .splash-btn i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-card">
+        
+        <!-- Logo -->
+        <div class="splash-icon">
+            <i class="bi bi-hospital"></i>
+        </div>
+
+        <!-- Brand Name -->
+        <h1 class="splash-title">MediCore</h1>
+        <p class="splash-subtitle">Hospital Management System</p>
+
+        <!-- Dashboard ke common icons ka preview (Creative touch) -->
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; color: var(--muted, #71808c); font-size: 20px;">
+            <i class="bi bi-person-circle"></i>
+            <i class="bi bi-calendar-check"></i>
+            <i class="bi bi-clipboard2-pulse"></i>
+            <i class="bi bi-gear"></i>
+        </div>
+
+        <!-- Button -->
+        <a href="auth/login.html" class="splash-btn">
+            <i class="bi bi-box-arrow-in-right"></i> Proceed to Login
+        </a>
+
+    </div>
+
+</body>
+</html>
