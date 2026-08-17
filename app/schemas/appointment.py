@@ -12,7 +12,7 @@ class AppointmentStatus(str, Enum):
 
 
 class AppointmentCreate(BaseModel):
-    patient_id : int
+    patient_id : int | None = None
     doctor_id: int
     appointment_date: date
     appointment_time: time
