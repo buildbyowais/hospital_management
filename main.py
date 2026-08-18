@@ -1,9 +1,11 @@
+import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
 from app.core.database import engine, SessionLocal
 from app.models.user import Base
+from app.models.user import User
 from app.models.patient import Patient
 from app.models.doctor import Doctor
 from app.models.staff import Staff
@@ -19,36 +21,47 @@ from app.api.appointment import router as appointment_router
 from app.api.prescription import router as prescription_router
 from app.api.report import router as patient_report_router
 
-# 1. Tables create karo
-Base.metadata.create_all(bind=engine)
-
-# 2. Admin user create karo (agar exist nahi karta)
-try:
+def init_admin():
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    from app.models.user import User
-    from passlib.context import CryptContext
+    try:
+        from passlib.context import CryptContext
 
-    admin_username = os.getenv("ADMIN_USERNAME")
-    admin_password = os.getenv("ADMIN_PASSWORD")
+        admin_username = os.getenv("ADMIN_USERNAME")
+        admin_password = os.getenv("ADMIN_PASSWORD")
 
-    if admin_username and admin_password:
-        existing_admin = db.query(User).filter(User.username == admin_username).first()
-        if not existing_admin:
-            pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-            new_admin = User(
-                username=admin_username,
-                email="admin@medicore.com",
-                hashed_password=pwd_context.hash(admin_password),
-                role="admin"
-            )
-            db.add(new_admin)
-            db.commit()
-            print(f"Admin user '{admin_username}' created.")
-    db.close()
-except Exception as e:
-    print(f"Admin creation skipped: {e}")
+        if admin_username and admin_password:
+            existing_admin = db.query(User).filter(User.username == admin_username).first()
+            if not existing_admin:
+                pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+                
+                # 72 bytes limit fix for bcrypt
+                safe_password = admin_password[:72]
+                
+                new_admin = User(
+                    username=admin_username,
+                    email="admin@medicore.com",
+                    hashed_password=pwd_context.hash(safe_password),
+                    role="admin"
+                )
+                db.add(new_admin)
+                db.commit()
+                print(f"--> [SUCCESS] Admin '{admin_username}' created successfully!")
+            else:
+                print(f"--> [INFO] Admin '{admin_username}' already exists.")
+        else:
+            print("--> [ERROR] Environment variables missing!")
+    except Exception as e:
+        print(f"--> [ERROR] Admin creation failed: {e}")
+    finally:
+        db.close()
 
-app = FastAPI(title="Hospital Management API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_admin()
+    yield
+
+app = FastAPI(title="Hospital Management API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -73,9 +86,9 @@ def home():
 @app.get("/check-admin")
 def check_admin():
     db = SessionLocal()
-    from app.models.user import User
-    user = db.query(User).filter(User.username == "admin").first()
+    target_username = os.getenv("ADMIN_USERNAME", "admin")
+    user = db.query(User).filter(User.username == target_username).first()
     db.close()
     if user:
         return {"exists": True, "username": user.username, "role": user.role}
-    return {"exists": False}
+    return {"exists": False, "searched_for": target_username}
