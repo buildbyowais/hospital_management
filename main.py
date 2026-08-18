@@ -69,3 +69,15 @@ app.include_router(patient_report_router)
 @app.get("/")
 def home():
     return {"message": "Hospital Management System!"}
+
+
+@app.get("/check-admin")
+def check_admin():
+    from app.core.database import SessionLocal
+    from app.models.user import User
+    db = SessionLocal()
+    user = db.query(User).filter(User.username == "admin").first()
+    db.close()
+    if user:
+        return {"exists": True, "username": user.username, "role": user.role}
+    return {"exists": False}
