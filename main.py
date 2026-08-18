@@ -9,7 +9,7 @@ from app.models.doctor import Doctor
 from app.models.staff import Staff
 from app.models.appointment import Appointment
 from app.models.prescription import Prescription
-from app.models.report import Report
+from app.models.report import PatientReport
 
 from app.api.patient import router as patient_router
 from app.api.doctor import router as doctor_router
