@@ -9,7 +9,7 @@ from app.models.doctor import Doctor
 from app.models.staff import Staff
 from app.models.appointment import Appointment
 from app.models.prescription import Prescription
-from app.models.report import PatientReport
+from app.models.report import Report
 
 from app.api.patient import router as patient_router
 from app.api.doctor import router as doctor_router
@@ -19,8 +19,10 @@ from app.api.appointment import router as appointment_router
 from app.api.prescription import router as prescription_router
 from app.api.report import router as patient_report_router
 
+# 1. Tables create karo
 Base.metadata.create_all(bind=engine)
 
+# 2. Admin user create karo (agar exist nahi karta)
 try:
     db = SessionLocal()
     from app.models.user import User
@@ -41,9 +43,7 @@ try:
             )
             db.add(new_admin)
             db.commit()
-            print(f"Admin user '{admin_username}' created automatically from ENV.")
-        else:
-            print(f"Admin user '{admin_username}' already exists.")
+            print(f"Admin user '{admin_username}' created.")
     db.close()
 except Exception as e:
     print(f"Admin creation skipped: {e}")
@@ -70,12 +70,10 @@ app.include_router(patient_report_router)
 def home():
     return {"message": "Hospital Management System!"}
 
-
 @app.get("/check-admin")
 def check_admin():
-    from app.core.database import SessionLocal
-    from app.models.user import User
     db = SessionLocal()
+    from app.models.user import User
     user = db.query(User).filter(User.username == "admin").first()
     db.close()
     if user:
