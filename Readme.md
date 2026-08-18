@@ -1,526 +1,192 @@
-# 🏥 Hospital Management System
+<p align="center">
+  <img src="https://img.icons8.com/color/96/000000/hospital-building.png" alt="MediCore Logo" width="80" height="80"/>
+</p>
 
-A backend-based **Hospital Management System** built with **FastAPI, SQLAlchemy, PostgreSQL, JWT Authentication, and Alembic**.
+<h1 align="center">🏥 MediCore - Hospital Management System</h1>
 
-The system manages hospital users, doctors, staff, patients, appointments, prescriptions, and patient medical reports with **role-based access control and data restrictions**.
+<p align="center">
+  <strong>A complete, role-based Hospital Management System built with FastAPI & PostgreSQL</strong>
+</p>
 
----
+<p align="center">
+  <a href="https://medicore-care.netlify.app">
+    <img src="https://img.shields.io/badge/Frontend-Live%20Demo-0b2438?style=for-the-badge&logo=netlify&logoColor=white" alt="Frontend Demo"/>
+  </a>
+  <a href="https://hospital-management-lmfv.onrender.com">
+    <img src="https://img.shields.io/badge/Backend-Live%20API-168c88?style=for-the-badge&logo=render&logoColor=white" alt="Backend API"/>
+  </a>
+  <a href="https://hospital-management-lmfv.onrender.com/docs">
+    <img src="https://img.shields.io/badge/API-Docs%20(Swagger)-blue?style=for-the-badge&logo=swagger" alt="Swagger Docs"/>
+  </a>
+</p>
 
-## 🚀 Features
-
-### 🔐 Authentication & Authorization
-
-* User registration and login
-* JWT-based authentication
-* Access Token and Refresh Token
-* Password hashing
-* Role-based authorization
-* Protected API endpoints
-* Permission-based access control
-
-### 👥 User Roles
-
-The system currently supports:
-
-* **Admin**
-* **Doctor**
-* **Staff**
-* **Patient**
-
-Each role has different permissions and restrictions.
-
----
-
-## 👨‍⚕️ Doctor Management
-
-Admin can:
-
-* Create doctors
-* Update doctors
-* Delete doctors
-* View doctors
-* Search doctors by:
-
-  * Name
-  * Specialization
-  * Email
-* Pagination support
-
-### Doctor Account Linking
-
-Doctor profiles are linked with user accounts through `user_id`.
-
-When a doctor registers:
-
-```text
-Doctor Profile
-      ↓
-Doctor Registration
-      ↓
-User Account Created
-      ↓
-user_id linked to Doctor
-```
-
-Deleting a doctor also removes the linked user account.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.14-blue?style=flat-square&logo=python"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.139.0-009688?style=flat-square&logo=fastapi"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql"/>
+  <img src="https://img.shields.io/badge/SQLAlchemy-2.0.51-red?style=flat-square&logo=sqlalchemy"/>
+  <img src="https://img.shields.io/badge/JWT-Authentication-black?style=flat-square&logo=jsonwebtokens"/>
+  <img src="https://img.shields.io/badge/Deployed-Render%20&%20Netlify-brightgreen?style=flat-square&logo=render"/>
+</p>
 
 ---
 
-## 👨‍💼 Staff Management
+## 🚀 **Live Demos**
 
-Admin can:
-
-* Create staff
-* Update staff
-* Delete staff
-* View staff
-* Search staff by name
-* Filter staff by designation
-* Pagination support
-
-Staff accounts are linked with user accounts using `user_id`.
-
-Deleting a staff member also removes the linked user account.
+| Frontend (Netlify) | Backend (Render) | Swagger Docs |
+|--------------------|------------------|--------------|
+| [medicore-care.netlify.app](https://medicore-care.netlify.app) | [hospital-management-lmfv.onrender.com](https://hospital-management-lmfv.onrender.com) | [Interactive API Docs](https://hospital-management-lmfv.onrender.com/docs) |
 
 ---
 
-## 🧑‍⚕️ Patient Management
+## 🌟 **Key Features**
 
-The system supports:
+### 🔐 **Authentication & Authorization**
+- JWT-based authentication (Access + Refresh Tokens)
+- Role-based access control (`Admin`, `Doctor`, `Staff`, `Patient`)
+- Secure password hashing with `bcrypt`
+- Protected endpoints with role validation
 
-* Patient creation
-* Patient update
-* Patient deletion
-* Patient registration
-* Patient login
-* Patient ↔ User linking
-* Doctor ↔ Patient relationship
-* Search and filtering
-* Pagination
-* Role-based patient access
+### 👥 **Role-Based Dashboards**
+- **Admin**: Full control over doctors, staff, patients, appointments, prescriptions, reports
+- **Doctor**: Manage own patients, appointments, prescriptions, and reports
+- **Staff**: Search patients, update appointments, and manage reports
+- **Patient**: Own profile, appointments, prescriptions, and report uploads
 
-### Patient Restrictions
+### 📅 **Appointment Management**
+- Request appointments with date, time, and reason
+- Status tracking: `Scheduled` → `Confirmed` → `Completed` → `Cancelled` → `No-Show`
+- Doctor and patient-specific access control
 
-A doctor can only access patients assigned to that doctor.
+### 💊 **Prescription Management**
+- Doctors can create and edit prescriptions
+- Fields: Medicine, Dosage, Frequency, Duration, Instructions, Date
+- Each prescription linked to both patient and doctor
 
-A patient can only access their own information and related records.
+### 📄 **Medical Reports & File Upload**
+- Patients can upload reports (PDF, JPG, JPEG, PNG)
+- Max file size: `10 MB`
+- Role-based access: Patients (own), Doctors (own patients), Staff/Admin (all)
+- Files stored in `uploads/reports/` directory
 
-Deleting a patient also removes the linked user account.
-
----
-
-## 📅 Appointment Management
-
-The appointment module supports:
-
-* Patient ID
-* Doctor ID
-* Appointment date
-* Appointment time
-* Reason
-* Appointment status
-
-### Appointment Status
-
-```text
-Scheduled
-Confirmed
-Completed
-Cancelled
-No Show
-```
-
-### Appointment Flow
-
-```text
-Patient
-   ↓
-Appointment Request
-   ↓
-Doctor Selection
-   ↓
-Date & Time
-   ↓
-Appointment Created
-   ↓
-Doctor Reviews Appointment
-   ↓
-Appointment Completed
-```
-
-### Appointment Access
-
-Appointments are protected according to the logged-in user's role.
-
-Patients can access their own appointments, while doctors can manage their relevant appointments.
+### 🔍 **Search, Filter & Pagination**
+- Search patients, doctors, staff by name/email
+- Filter doctors by specialization
+- Filter staff by designation
+- Pagination support with `skip` & `limit`
 
 ---
 
-## 💊 Prescription Management
+## 🛠️ **Tech Stack**
 
-Doctors can create prescriptions for patients.
-
-Prescription information includes:
-
-* Patient
-* Doctor
-* Medicine
-* Dosage
-* Frequency
-* Duration
-* Instructions
-* Date
-
-Prescriptions are linked with both:
-
-```text
-Patient ↔ Prescription ↔ Doctor
-```
-
-This allows medical prescriptions to remain associated with the correct patient and doctor.
+| Category        | Technology |
+|-----------------|------------|
+| Backend         | Python 3.14, FastAPI 0.139.0 |
+| Database        | PostgreSQL 16, SQLAlchemy 2.0.51 |
+| Authentication  | JWT, OAuth2 Password Flow, bcrypt |
+| Migrations      | Alembic 1.18.5 |
+| File Management | FastAPI `UploadFile`, local storage |
+| API Docs        | Swagger UI, ReDoc |
+| Deployment      | Render (Backend), Netlify (Frontend) |
 
 ---
 
-## 📄 Patient Reports / File Upload
+## 📂 **Project Structure**
 
-Patients can upload their medical reports and documents.
-
-Supported examples:
-
-* Blood Test Reports
-* X-Ray
-* MRI
-* CT Scan
-* Prescriptions
-* Medical Documents
-
-### Supported File Types
-
-```text
-PDF
-JPG
-JPEG
-PNG
 ```
-
-### File Size
-
-Maximum file size:
-
-```text
-10 MB
-```
-
-Uploaded files are stored in:
-
-```text
-uploads/reports/
-```
-
-The database stores the file information and associates the report with the patient.
-
-### Report Access
-
-| Role    | Upload |           View |       Download |
-| ------- | -----: | -------------: | -------------: |
-| Patient |  ✅ Own |          ✅ Own |          ✅ Own |
-| Doctor  |      ❌ | ✅ Own Patients | ✅ Own Patients |
-| Staff   |      ❌ |          ✅ All |          ✅ All |
-| Admin   |      ❌ |          ✅ All |          ✅ All |
-
----
-
-## 🔗 Database Relationships
-
-### User Relationships
-
-```text
-User
- ├── Doctor
- ├── Staff
- └── Patient
-```
-
-Each profile can be linked with its corresponding user account using `user_id`.
-
-### Doctor & Patient
-
-```text
-Doctor
-   │
-   └── Patients
-```
-
-A patient is assigned to a doctor using `doctor_id`.
-
-### Appointments
-
-```text
-Patient ─── Appointment ─── Doctor
-```
-
-### Prescriptions
-
-```text
-Patient ─── Prescription ─── Doctor
-```
-
-### Reports
-
-```text
-Patient
-   │
-   └── Patient Reports
-```
-
----
-
-## 🛡️ Role-Based Access Control
-
-The system uses role-based restrictions to control access to protected resources.
-
-Example:
-
-```text
-Admin
- ├── Manage Doctors
- ├── Manage Staff
- ├── Manage Patients
- └── Access All Records
-
-Doctor
- ├── Access Own Patients
- ├── Manage Relevant Appointments
- ├── Create Prescriptions
- └── Access Own Patients' Reports
-
-Staff
- ├── Access Authorized Patient Data
- ├── Access Appointments
- └── Access Reports
-
-Patient
- ├── Access Own Profile
- ├── Access Own Appointments
- ├── Access Own Prescriptions
- └── Upload/View Own Reports
-```
-
----
-
-## 🔍 Search, Filtering & Pagination
-
-The system supports API-level searching, filtering, and pagination.
-
-Examples:
-
-```http
-GET /patients?search=Ali
-GET /patients?doctor_id=2
-GET /patients?skip=0&limit=10
-```
-
-Doctor search:
-
-```http
-GET /doctors?search=Ali
-GET /doctors?specialization=Cardiology
-GET /doctors?email=doctor@example.com
-```
-
-Staff search/filter:
-
-```http
-GET /staff?search=Ali
-GET /staff?designation=Manager
-GET /staff?skip=0&limit=10
-```
-
----
-
-## 🧰 Tech Stack
-
-### Backend
-
-* Python
-* FastAPI
-* SQLAlchemy
-* Pydantic
-
-### Database
-
-* PostgreSQL
-
-### Authentication
-
-* JWT
-* OAuth2 Password Flow
-* Password Hashing
-
-### Database Migrations
-
-* Alembic
-
-### File Management
-
-* FastAPI `UploadFile`
-* Local file storage
-
-### API Documentation
-
-* Swagger UI
-* OpenAPI
-
----
-
-## 📁 Project Structure
-
-```text
 hospital_management/
-│
 ├── app/
-│   ├── api/
-│   │   ├── auth.py
-│   │   ├── doctor.py
-│   │   ├── patient.py
-│   │   ├── staff.py
-│   │   ├── appointment.py
-│   │   ├── prescription.py
-│   │   └── report.py
-│   │
-│   ├── core/
-│   │   ├── config.py
-│   │   ├── database.py
-│   │   └── security.py
-│   │
-│   ├── crud/
-│   │   ├── user.py
-│   │   ├── doctor.py
-│   │   ├── patient.py
-│   │   ├── staff.py
-│   │   ├── appointment.py
-│   │   ├── prescription.py
-│   │   └── report.py
-│   │
-│   ├── models/
-│   │   ├── user.py
-│   │   ├── doctor.py
-│   │   ├── patient.py
-│   │   ├── staff.py
-│   │   ├── appointment.py
-│   │   ├── prescription.py
-│   │   └── report.py
-│   │
-│   └── schemas/
-│       ├── user.py
-│       ├── doctor.py
-│       ├── patient.py
-│       ├── staff.py
-│       ├── appointment.py
-│       ├── prescription.py
-│       └── report.py
-│
-├── alembic/
-├── uploads/
-│   └── reports/
-│
-├── .env
-├── alembic.ini
-├── requirements.txt
-└── main.py
+│   ├── api/                     # Route handlers (auth, doctor, patient, etc.)
+│   ├── core/                    # Config, database, security
+│   ├── crud/                    # Database operations
+│   ├── models/                  # SQLAlchemy models
+│   └── schemas/                 # Pydantic schemas
+├── alembic/                     # Database migrations
+├── uploads/reports/             # Uploaded medical reports
+├── .env                         # Environment variables
+├── alembic.ini                  # Alembic config
+├── requirements.txt             # Python dependencies
+└── main.py                      # FastAPI application entry point
 ```
 
 ---
 
-## ⚙️ Installation
+## 🔧 **Installation & Setup**
 
-### 1. Clone the Repository
-
+### 1️⃣ Clone the repository
 ```bash
-git clone <repository-url>
+git clone <your-repo-url>
 cd hospital_management
 ```
 
-### 2. Create Virtual Environment
-
+### 2️⃣ Create and activate virtual environment
 ```bash
 python -m venv hospital_env
-```
-
-Activate it on Windows:
-
-```bash
+# Windows
 hospital_env\Scripts\activate
+# Mac/Linux
+source hospital_env/bin/activate
 ```
 
-### 3. Install Dependencies
-
+### 3️⃣ Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
-
-Create a `.env` file:
-
+### 4️⃣ Configure environment variables (`.env`)
 ```env
-DATABASE_URL=your_database_url
-
-JWT_SECRET_KEY=your_secret_key
+DATABASE_URL=postgresql://username:password@localhost:5432/hospital_db
+JWT_SECRET_KEY=your_secret_key_here
 ALGORITHM=HS256
-
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
 
-### 5. Run Database Migration
-
+### 5️⃣ Run database migrations
 ```bash
 alembic upgrade head
 ```
 
-### 6. Start the Server
-
+### 6️⃣ Start the server
 ```bash
 uvicorn main:app --reload
 ```
 
----
-
-## 📚 API Documentation
-
-After starting the server, Swagger documentation is available at:
-
-```text
-${window.API_BASE_URL}/docs
-```
-
-Alternative ReDoc documentation:
-
-```text
-${window.API_BASE_URL}/redoc
-```
+Server will run at `http://localhost:8000`
 
 ---
 
-## 🔒 Security
+## 📚 **API Documentation**
 
-The system implements:
+Once the server is running, access interactive docs at:
 
-* JWT authentication
-* Password hashing
-* Role-based authorization
-* Protected endpoints
-* User/profile linking
-* Patient data restrictions
-* Doctor-specific patient restrictions
-* File type validation
-* File size validation
-* Secure report access
+- **Swagger UI** → `http://localhost:8000/docs`
+- **ReDoc** → `http://localhost:8000/redoc`
 
 ---
 
-## 📌 Current Development Status
+## 🔒 **Security Features**
+
+- JWT with Access & Refresh tokens
+- Password hashing with `bcrypt`
+- Role-based authorization (`require_role` middleware)
+- User-profile linking via `user_id`
+- Patient data isolation (doctor can only see own patients)
+- File type and size validation for uploads
+- Secure report access based on user role
+
+---
+
+## 🚀 **Deployment**
+
+This project is currently deployed live:
+
+- **Backend**: [Render](https://render.com) → `https://hospital-management-lmfv.onrender.com`
+- **Frontend**: [Netlify](https://netlify.com) → `https://medicore-care.netlify.app`
+
+---
+
+## 📌 **Project Status**
 
 | Module                        | Status     |
 | ----------------------------- | ---------- |
@@ -533,31 +199,27 @@ The system implements:
 | Appointment Management        | ✅ Complete |
 | Prescription Management       | ✅ Complete |
 | Patient Reports / File Upload | ✅ Complete |
-| Production Optimization       | 🔄 Planned |
-| Future BRD Modules            | 🔄 Planned |
+| Production Deployment         | ✅ Complete |
 
 ---
 
-## 🔮 Future Enhancements
+## 🔮 **Future Enhancements**
 
-Possible future improvements include:
-
-* Production deployment
-* Cloud file storage
-* Email notifications
-* Appointment reminders
-* Advanced medical history
-* Audit logging
-* Automated backups
-* API rate limiting
-* Performance optimization
-* Docker deployment
-* CI/CD pipeline
+- Cloud file storage (AWS S3 / Cloudinary)
+- Email notifications & appointment reminders
+- Advanced medical history & audit logs
+- API rate limiting & performance optimization
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
 
 ---
 
-## 👨‍💻 Project
+## 👨‍💻 **Developer**
 
-**Hospital Management System**
+Maintained by **Owais** | [GitHub](https://github.com) | [Live Demo](https://medicore-care.netlify.app)
 
-Backend developed using **FastAPI + PostgreSQL + SQLAlchemy**, with authentication, authorization, medical management modules, appointment handling, prescriptions, and patient document management.
+---
+
+<p align="center">
+  <strong>Made with ❤️ using FastAPI & PostgreSQL</strong>
+</p>
