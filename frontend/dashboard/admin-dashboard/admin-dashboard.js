@@ -18,9 +18,9 @@ function checkAuthentication() {
 async function loadDashboardData() {
     try {
         const [patients, doctors, staff, appointments] = await Promise.all([
-            apiRequest("/patients/?limit=10"),
-            apiRequest("/doctors/?limit=10"),
-            apiRequest("/staff/?limit=10"),
+            apiRequest("/patients/?limit=100"),
+            apiRequest("/doctors/?limit=100"),
+            apiRequest("/staff/?limit=100"),
             apiRequest("/appointments/admin")
         ]);
 
