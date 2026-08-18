@@ -1,1 +1,3 @@
-window.API_BASE_URL = "https://hospital-management-lmfv.onrender.com";
+window.API_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:8000"  
+    : "https://hospital-management-lmfv.onrender.com"; 
