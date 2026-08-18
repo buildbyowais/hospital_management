@@ -208,7 +208,7 @@ def read_all(
     doctor_id: int | None = None,
     skip: int = 0,
     limit: int = Query(
-        1000,
+        100,
         ge=1,
         le=100
     ),
