@@ -61,17 +61,25 @@ async function loadDoctors(keepMessage = false) {
     setSearchLoading(true);
 
     try {
+        // ✅ Fix: Backend se saare doctors fetch karo (no params for search)
         const params = new URLSearchParams();
         params.append("skip", currentSkip);
         params.append("limit", currentLimit);
 
-        if (search) {
-            params.append("search", search);
-        }
-
         const data = await apiRequest(`/doctors/?${params.toString()}`, "GET");
         currentDoctors = Array.isArray(data) ? data : [];
-        renderDoctors(currentDoctors);
+
+        // ✅ Client-side filtering (agar search word hai)
+        let filtered = currentDoctors;
+        if (search) {
+            filtered = currentDoctors.filter(doctor =>
+                doctor.name.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.email.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.specialization?.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+
+        renderDoctors(filtered);
         updatePagination();
 
         if (!keepMessage) {
