@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 let currentSkip = 0;
 let currentLimit = 10;
@@ -6,10 +6,6 @@ let currentStaff = [];
 let currentRole = "";
 let staffModal;
 let viewStaffModal;
-
-// ==========================================
-// INITIALIZE
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
     staffModal = new bootstrap.Modal(document.getElementById("staffModal"));
@@ -20,10 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadStaff();
 });
 
-// ==========================================
-// AUTH
-// ==========================================
-
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -32,10 +24,6 @@ function checkAuthentication() {
     }
     return true;
 }
-
-// ==========================================
-// CURRENT USER
-// ==========================================
 
 async function loadCurrentUser() {
     const token = localStorage.getItem("access_token");
@@ -65,10 +53,6 @@ async function loadCurrentUser() {
     }
 }
 
-// ==========================================
-// LOAD STAFF
-// ==========================================
-
 async function loadStaff(keepMessage = false) {
     const search = document.getElementById("searchInput").value.trim();
     const designation = document.getElementById("designationFilter").value.trim();
@@ -94,7 +78,6 @@ async function loadStaff(keepMessage = false) {
         renderStaff(currentStaff);
         updatePagination();
 
-        // Only hide message if we're not keeping it
         if (!keepMessage) {
             hideMessage();
         }
@@ -107,10 +90,6 @@ async function loadStaff(keepMessage = false) {
         setSearchLoading(false);
     }
 }
-
-// ==========================================
-// RENDER
-// ==========================================
 
 function renderStaff(staff) {
     const tbody = document.getElementById("staffTableBody");
@@ -131,10 +110,6 @@ function renderStaff(staff) {
 
     tbody.innerHTML = staff.map(member => createStaffRow(member)).join("");
 }
-
-// ==========================================
-// STAFF ROW
-// ==========================================
 
 function createStaffRow(staff) {
     const deleteButton = currentRole === "admin" ? `
@@ -170,10 +145,6 @@ function createStaffRow(staff) {
     `;
 }
 
-// ==========================================
-// CREATE
-// ==========================================
-
 function openCreateModal() {
     document.getElementById("modalTitle").textContent = "Add Staff";
     document.getElementById("saveText").textContent = "Save Staff";
@@ -182,10 +153,6 @@ function openCreateModal() {
     hideModalError();
     staffModal.show();
 }
-
-// ==========================================
-// EDIT
-// ==========================================
 
 async function editStaff(staffId) {
     try {
@@ -208,10 +175,6 @@ async function editStaff(staffId) {
         showMessage(getFriendlyError(error), "error");
     }
 }
-
-// ==========================================
-// SAVE
-// ==========================================
 
 async function saveStaff() {
     hideModalError();
@@ -255,10 +218,8 @@ async function saveStaff() {
         staffModal.hide();
         currentSkip = 0;
         
-        // Show success message
         showMessage(successMessage, "success");
         
-        // Reload data with keepMessage=true so message stays
         await loadStaff(true);
 
     } catch (error) {
@@ -268,10 +229,6 @@ async function saveStaff() {
         setSaveLoading(false);
     }
 }
-
-// ==========================================
-// VIEW
-// ==========================================
 
 async function viewStaff(staffId) {
     const details = document.getElementById("staffDetails");
@@ -331,10 +288,6 @@ async function viewStaff(staffId) {
     }
 }
 
-// ==========================================
-// DELETE
-// ==========================================
-
 async function deleteStaff(staffId) {
     if (currentRole !== "admin") {
         showMessage("Only administrators can delete staff members.", "error");
@@ -344,7 +297,6 @@ async function deleteStaff(staffId) {
     const staff = currentStaff.find(s => s.id === staffId);
     const staffName = staff ? staff.name : "this staff member";
 
-    // Show custom confirmation modal
     showConfirmationModal(
         `Delete Staff Member`,
         `Are you sure you want to delete "${staffName}"? This action cannot be undone.`,
@@ -367,10 +319,6 @@ async function deleteStaff(staffId) {
     );
 }
 
-// ==========================================
-// PAGINATION
-// ==========================================
-
 function nextPage() {
     currentSkip += currentLimit;
     loadStaff();
@@ -386,10 +334,6 @@ function updatePagination() {
     document.getElementById("nextBtn").disabled = currentStaff.length < currentLimit;
     document.getElementById("pageInfo").textContent = `Page ${Math.floor(currentSkip / currentLimit) + 1}`;
 }
-
-// ==========================================
-// API REQUEST
-// ==========================================
 
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
@@ -432,10 +376,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     return data;
 }
 
-// ==========================================
-// LOADING
-// ==========================================
-
 function setSearchLoading(loading) {
     const button = document.getElementById("searchBtn");
     const spinner = document.getElementById("searchSpinner");
@@ -466,32 +406,23 @@ function setSaveLoading(loading) {
     }
 }
 
-// ==========================================
-// MESSAGES
-// ==========================================
-
 function showMessage(message, type) {
     const box = document.getElementById("messageBox");
     
-    // Set the message
     box.textContent = message;
     
-    // Set the class for styling
     if (type === "error") {
         box.className = "message-box message-error";
     } else {
         box.className = "message-box message-success";
     }
     
-    // Remove d-none to show the message
     box.classList.remove("d-none");
     
-    // Clear any existing timeout
     if (box._timeout) {
         clearTimeout(box._timeout);
     }
     
-    // Auto-hide after 5 seconds
     box._timeout = setTimeout(function() {
         box.classList.add("d-none");
     }, 5000);
@@ -513,41 +444,26 @@ function hideModalError() {
     document.getElementById("modalError").classList.add("d-none");
 }
 
-// ==========================================
-// SIDEBAR
-// ==========================================
-
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");
 }
-
-// ==========================================
-// LOGOUT
-// ==========================================
 
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
 
-// ==========================================
-// CONFIRMATION MODAL
-// ==========================================
-
 let confirmationModal;
 let confirmCallback = null;
 
 function showConfirmationModal(title, message, callback) {
-    // Initialize modal if not already done
     if (!confirmationModal) {
         confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
     }
     
-    // Set title and message
     document.getElementById("confirmationTitle").textContent = title;
     document.getElementById("confirmationMessage").textContent = message;
     
-    // Reset button state
     const confirmBtn = document.getElementById("confirmDeleteBtn");
     const spinner = document.getElementById("confirmSpinner");
     const text = document.getElementById("confirmText");
@@ -556,15 +472,12 @@ function showConfirmationModal(title, message, callback) {
     spinner.classList.add("d-none");
     text.textContent = "Delete";
     
-    // Store callback
     confirmCallback = callback;
     
-    // Remove old event listeners and add new one
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     
     newConfirmBtn.addEventListener("click", async function() {
-        // Disable button and show spinner
         this.disabled = true;
         document.getElementById("confirmSpinner").classList.remove("d-none");
         document.getElementById("confirmText").textContent = "Deleting...";
@@ -573,24 +486,17 @@ function showConfirmationModal(title, message, callback) {
             if (confirmCallback) {
                 await confirmCallback();
             }
-            // Close modal on success
             confirmationModal.hide();
         } catch (error) {
             console.error("Delete error:", error);
-            // Re-enable button on error
             this.disabled = false;
             document.getElementById("confirmSpinner").classList.add("d-none");
             document.getElementById("confirmText").textContent = "Delete";
         }
     });
     
-    // Show modal
     confirmationModal.show();
 }
-
-// ==========================================
-// UTILITIES
-// ==========================================
 
 function capitalize(value) {
     if (!value) return "";

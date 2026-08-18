@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 const token = localStorage.getItem("access_token");
 const role = localStorage.getItem("user_role");
@@ -153,12 +153,8 @@ async function loadAppointments() {
     }
 }
 
-// =====================================================
-// UPDATE APPOINTMENT STATUS (FIXED URL)
-// =====================================================
 async function updateAppointmentStatus(appointmentId, newStatus) {
     try {
-        // ✅ FIX: Use your backend's exact endpoint with /status
         await apiRequest(`/appointments/${appointmentId}/status`, {
             method: "PUT",
             headers: {
@@ -174,9 +170,6 @@ async function updateAppointmentStatus(appointmentId, newStatus) {
     }
 }
 
-// =====================================================
-// RENDER APPOINTMENTS
-// =====================================================
 function renderAppointments(appointments) {
     const container = document.getElementById("appointmentsContainer");
 
@@ -378,9 +371,6 @@ async function loadPrescriptions() {
     }
 }
 
-// =====================================================
-// PRESCRIPTIONS TABLE
-// =====================================================
 function renderPrescriptions(prescriptions) {
     const container = document.getElementById("prescriptionsContainer");
 
@@ -619,10 +609,6 @@ function setPrescriptionDate() {
     input.value = new Date().toISOString().split("T")[0];
 }
 
-// =====================================================
-// EDIT PRESCRIPTION LOGIC
-// =====================================================
-
 let editingPrescriptionId = null;
 
 async function openEditModal(prescriptionId) {
@@ -680,10 +666,6 @@ async function saveEditPrescription() {
     }
 }
 
-// =====================================================
-// DELETE PRESCRIPTION LOGIC (WITH PROPER MODAL)
-// =====================================================
-
 let deletePrescriptionId = null;
 
 function openDeleteModal(prescriptionId) {
@@ -714,9 +696,6 @@ async function confirmDeletePrescription() {
     }
 }
 
-// =====================================================
-// TOAST NOTIFICATION (Replaces alert)
-// =====================================================
 function showToast(message, type = "success") {
     const toastContainer = document.getElementById("toastContainer");
     if (!toastContainer) {
@@ -745,10 +724,6 @@ function showToast(message, type = "success") {
     const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
     toast.show();
 }
-
-// =====================================================
-// HELPERS
-// =====================================================
 
 function formatDate(value) {
     if (!value) return "-";
@@ -813,7 +788,6 @@ function logout() {
     window.location.href = "../../auth/login.html";
 }
 
-// Attach confirmDelete to the modal button
 document.addEventListener("DOMContentLoaded", function() {
     const confirmBtn = document.getElementById("confirmDeleteBtn");
     if (confirmBtn) {

@@ -1,11 +1,7 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 let currentReports = [];
 let viewReportModal;
-
-// ==========================================
-// INITIALIZE
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
     viewReportModal = new bootstrap.Modal(document.getElementById("viewReportModal"));
@@ -15,10 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadReports();
 });
 
-// ==========================================
-// AUTHENTICATION
-// ==========================================
-
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -27,10 +19,6 @@ function checkAuthentication() {
     }
     return true;
 }
-
-// ==========================================
-// CURRENT USER
-// ==========================================
 
 async function loadCurrentUser() {
     try {
@@ -42,10 +30,6 @@ async function loadCurrentUser() {
         logout();
     }
 }
-
-// ==========================================
-// LOAD REPORTS
-// ==========================================
 
 async function loadReports() {
     setSearchLoading(true);
@@ -64,10 +48,6 @@ async function loadReports() {
         setSearchLoading(false);
     }
 }
-
-// ==========================================
-// RENDER REPORTS
-// ==========================================
 
 function renderReports(reports) {
     const tbody = document.getElementById("reportsTableBody");
@@ -88,10 +68,6 @@ function renderReports(reports) {
 
     tbody.innerHTML = reports.map(report => createReportRow(report)).join("");
 }
-
-// ==========================================
-// REPORT ROW
-// ==========================================
 
 function createReportRow(report) {
     const patientDisplay = report.patient_id ? `Patient #${report.patient_id}` : "N/A";
@@ -122,10 +98,6 @@ function createReportRow(report) {
         </tr>
     `;
 }
-
-// ==========================================
-// VIEW REPORT
-// ==========================================
 
 async function viewReport(reportId) {
     const details = document.getElementById("reportDetails");
@@ -225,10 +197,6 @@ async function viewReport(reportId) {
     }
 }
 
-// ==========================================
-// DOWNLOAD REPORT
-// ==========================================
-
 async function downloadReport(reportId) {
     try {
         const id = Number(reportId);
@@ -287,10 +255,6 @@ async function downloadReport(reportId) {
     }
 }
 
-// ==========================================
-// API REQUEST
-// ==========================================
-
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
 
@@ -337,10 +301,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     }
 }
 
-// ==========================================
-// LOADING
-// ==========================================
-
 function setSearchLoading(loading) {
     const button = document.getElementById("searchBtn");
     const spinner = document.getElementById("searchSpinner");
@@ -357,10 +317,6 @@ function setSearchLoading(loading) {
         if (text) text.textContent = "Refresh";
     }
 }
-
-// ==========================================
-// MESSAGES
-// ==========================================
 
 function showMessage(message, type) {
     const box = document.getElementById("messageBox");
@@ -390,10 +346,6 @@ function hideMessage() {
     box.textContent = "";
 }
 
-// ==========================================
-// DATE
-// ==========================================
-
 function formatDate(value) {
     if (!value) return "-";
     try {
@@ -410,10 +362,6 @@ function formatDate(value) {
     }
 }
 
-// ==========================================
-// FILE SIZE
-// ==========================================
-
 function formatFileSize(bytes) {
     if (!bytes) return "-";
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -422,26 +370,14 @@ function formatFileSize(bytes) {
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
 }
 
-// ==========================================
-// SIDEBAR
-// ==========================================
-
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");
 }
-
-// ==========================================
-// LOGOUT
-// ==========================================
 
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
-
-// ==========================================
-// UTILITIES
-// ==========================================
 
 function capitalize(value) {
     if (!value) return "";

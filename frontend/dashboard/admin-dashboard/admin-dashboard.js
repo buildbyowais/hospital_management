@@ -1,18 +1,10 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
-
-// ==========================================
-// INITIALIZE
-// ==========================================
+const API_BASE_URL = window.API_BASE_URL;
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (!checkAuthentication()) return;
     await loadDashboardData();
     await loadRecentAppointments();
 });
-
-// ==========================================
-// AUTHENTICATION
-// ==========================================
 
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
@@ -23,16 +15,12 @@ function checkAuthentication() {
     return true;
 }
 
-// ==========================================
-// LOAD DASHBOARD DATA
-// ==========================================
-
 async function loadDashboardData() {
     try {
         const [patients, doctors, staff, appointments] = await Promise.all([
-            apiRequest("/patients/?limit=1"),
-            apiRequest("/doctors/?limit=1"),
-            apiRequest("/staff/?limit=1"),
+            apiRequest("/patients/?limit=10"),
+            apiRequest("/doctors/?limit=10"),
+            apiRequest("/staff/?limit=10"),
             apiRequest("/appointments/admin")
         ]);
 
@@ -49,10 +37,6 @@ async function loadDashboardData() {
         document.getElementById("appointmentCount").textContent = "0";
     }
 }
-
-// ==========================================
-// LOAD RECENT APPOINTMENTS
-// ==========================================
 
 async function loadRecentAppointments() {
     const tbody = document.getElementById("appointmentsTable");
@@ -100,10 +84,6 @@ async function loadRecentAppointments() {
     }
 }
 
-// ==========================================
-// API REQUEST
-// ==========================================
-
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
 
@@ -145,10 +125,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     return data;
 }
 
-// ==========================================
-// UTILITY FUNCTIONS
-// ==========================================
-
 function formatDate(value) {
     if (!value) return "-";
     try {
@@ -173,18 +149,10 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
-// ==========================================
-// LOGOUT
-// ==========================================
-
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
-
-// ==========================================
-// SIDEBAR TOGGLE
-// ==========================================
 
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");

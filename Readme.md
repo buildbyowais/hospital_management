@@ -492,13 +492,13 @@ uvicorn main:app --reload
 After starting the server, Swagger documentation is available at:
 
 ```text
-http://127.0.0.1:8000/docs
+${window.API_BASE_URL}/docs
 ```
 
 Alternative ReDoc documentation:
 
 ```text
-http://127.0.0.1:8000/redoc
+${window.API_BASE_URL}/redoc
 ```
 
 ---

@@ -1,14 +1,10 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 let currentSkip = 0;
 let currentLimit = 10;
 let currentPatients = [];
 let patientModal;
 let viewPatientModal;
-
-// ==========================================
-// INITIALIZE
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
     patientModal = new bootstrap.Modal(document.getElementById("patientModal"));
@@ -19,10 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadPatients();
 });
 
-// ==========================================
-// AUTHENTICATION
-// ==========================================
-
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -31,10 +23,6 @@ function checkAuthentication() {
     }
     return true;
 }
-
-// ==========================================
-// CURRENT USER
-// ==========================================
 
 async function loadCurrentUser() {
     const token = localStorage.getItem("access_token");
@@ -57,10 +45,6 @@ async function loadCurrentUser() {
         logout();
     }
 }
-
-// ==========================================
-// LOAD PATIENTS
-// ==========================================
 
 async function loadPatients() {
     const search = document.getElementById("searchInput").value.trim();
@@ -89,10 +73,6 @@ async function loadPatients() {
     }
 }
 
-// ==========================================
-// RENDER PATIENTS
-// ==========================================
-
 function renderPatients(patients) {
     const tbody = document.getElementById("patientsTableBody");
     const resultInfo = document.getElementById("resultInfo");
@@ -112,10 +92,6 @@ function renderPatients(patients) {
 
     tbody.innerHTML = patients.map(patient => createPatientRow(patient)).join("");
 }
-
-// ==========================================
-// PATIENT ROW
-// ==========================================
 
 function createPatientRow(patient) {
     const role = localStorage.getItem("user_role");
@@ -151,10 +127,6 @@ function createPatientRow(patient) {
     `;
 }
 
-// ==========================================
-// CREATE MODAL
-// ==========================================
-
 function openCreateModal() {
     document.getElementById("modalTitle").textContent = "Add Patient";
     document.getElementById("saveText").textContent = "Save Patient";
@@ -163,10 +135,6 @@ function openCreateModal() {
     hideModalError();
     patientModal.show();
 }
-
-// ==========================================
-// EDIT PATIENT
-// ==========================================
 
 async function editPatient(patientId) {
     try {
@@ -188,10 +156,6 @@ async function editPatient(patientId) {
         showMessage(getFriendlyError(error), "error");
     }
 }
-
-// ==========================================
-// SAVE PATIENT
-// ==========================================
 
 async function savePatient() {
     hideModalError();
@@ -226,10 +190,8 @@ async function savePatient() {
         patientModal.hide();
         currentSkip = 0;
         
-        // Show success message
         showMessage(successMessage, "success");
         
-        // Reload data
         await loadPatients();
 
     } catch (error) {
@@ -239,10 +201,6 @@ async function savePatient() {
         setSaveLoading(false);
     }
 }
-
-// ==========================================
-// VIEW PATIENT
-// ==========================================
 
 async function viewPatient(patientId) {
     const details = document.getElementById("patientDetails");
@@ -299,10 +257,6 @@ async function viewPatient(patientId) {
     }
 }
 
-// ==========================================
-// DELETE PATIENT
-// ==========================================
-
 async function deletePatient(patientId) {
     const role = localStorage.getItem("user_role");
 
@@ -314,7 +268,6 @@ async function deletePatient(patientId) {
     const patient = currentPatients.find(p => p.id === patientId);
     const patientName = patient ? patient.name : "this patient";
 
-    // Show custom confirmation modal
     showConfirmationModal(
         `Delete Patient`,
         `Are you sure you want to delete "${patientName}"? This action cannot be undone.`,
@@ -337,10 +290,6 @@ async function deletePatient(patientId) {
     );
 }
 
-// ==========================================
-// PAGINATION
-// ==========================================
-
 function nextPage() {
     currentSkip += currentLimit;
     loadPatients();
@@ -356,10 +305,6 @@ function updatePagination() {
     document.getElementById("nextBtn").disabled = currentPatients.length < currentLimit;
     document.getElementById("pageInfo").textContent = `Page ${Math.floor(currentSkip / currentLimit) + 1}`;
 }
-
-// ==========================================
-// API REQUEST
-// ==========================================
 
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
@@ -401,10 +346,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     return data;
 }
 
-// ==========================================
-// LOADING STATES
-// ==========================================
-
 function setSearchLoading(loading) {
     const button = document.getElementById("searchBtn");
     const spinner = document.getElementById("searchSpinner");
@@ -435,22 +376,16 @@ function setSaveLoading(loading) {
     }
 }
 
-// ==========================================
-// MESSAGES
-// ==========================================
-
 function showMessage(message, type) {
     const box = document.getElementById("messageBox");
     box.textContent = message;
     box.className = `message-box ${type === "error" ? "message-error" : "message-success"}`;
     box.classList.remove("d-none");
 
-    // Clear any existing timeout
     if (box._timeout) {
         clearTimeout(box._timeout);
     }
     
-    // Auto-hide after 5 seconds
     box._timeout = setTimeout(() => {
         box.classList.add("d-none");
     }, 5000);
@@ -472,41 +407,26 @@ function hideModalError() {
     document.getElementById("modalError").classList.add("d-none");
 }
 
-// ==========================================
-// LOGOUT
-// ==========================================
-
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
 
-// ==========================================
-// SIDEBAR
-// ==========================================
-
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");
 }
-
-// ==========================================
-// CONFIRMATION MODAL
-// ==========================================
 
 let confirmationModal;
 let confirmCallback = null;
 
 function showConfirmationModal(title, message, callback) {
-    // Initialize modal if not already done
     if (!confirmationModal) {
         confirmationModal = new bootstrap.Modal(document.getElementById("confirmationModal"));
     }
     
-    // Set title and message
     document.getElementById("confirmationTitle").textContent = title;
     document.getElementById("confirmationMessage").textContent = message;
     
-    // Reset button state
     const confirmBtn = document.getElementById("confirmDeleteBtn");
     const spinner = document.getElementById("confirmSpinner");
     const text = document.getElementById("confirmText");
@@ -515,15 +435,12 @@ function showConfirmationModal(title, message, callback) {
     spinner.classList.add("d-none");
     text.textContent = "Delete";
     
-    // Store callback
     confirmCallback = callback;
     
-    // Remove old event listeners and add new one
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
     
     newConfirmBtn.addEventListener("click", async function() {
-        // Disable button and show spinner
         this.disabled = true;
         document.getElementById("confirmSpinner").classList.remove("d-none");
         document.getElementById("confirmText").textContent = "Deleting...";
@@ -532,24 +449,17 @@ function showConfirmationModal(title, message, callback) {
             if (confirmCallback) {
                 await confirmCallback();
             }
-            // Close modal on success
             confirmationModal.hide();
         } catch (error) {
             console.error("Delete error:", error);
-            // Re-enable button on error
             this.disabled = false;
             document.getElementById("confirmSpinner").classList.add("d-none");
             document.getElementById("confirmText").textContent = "Delete";
         }
     });
     
-    // Show modal
     confirmationModal.show();
 }
-
-// ==========================================
-// UTILITIES
-// ==========================================
 
 function capitalize(value) {
     if (!value) return "";

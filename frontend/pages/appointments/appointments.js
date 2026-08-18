@@ -1,11 +1,7 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 let appointments = [];
 let statusModal;
-
-// ==========================================
-// INITIALIZE
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
     statusModal = new bootstrap.Modal(document.getElementById("statusModal"));
@@ -15,10 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadAppointments();
 });
 
-// ==========================================
-// AUTHENTICATION
-// ==========================================
-
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -27,10 +19,6 @@ function checkAuthentication() {
     }
     return true;
 }
-
-// ==========================================
-// CURRENT USER
-// ==========================================
 
 async function loadCurrentUser() {
     try {
@@ -43,10 +31,6 @@ async function loadCurrentUser() {
     }
 }
 
-// ==========================================
-// LOAD APPOINTMENTS
-// ==========================================
-
 async function loadAppointments(keepMessage = false) {
     renderLoading();
 
@@ -56,7 +40,6 @@ async function loadAppointments(keepMessage = false) {
         renderAppointments(appointments);
         updateStats(appointments);
         
-        // Only hide message if we're not keeping it
         if (!keepMessage) {
             hideMessage();
         }
@@ -67,10 +50,6 @@ async function loadAppointments(keepMessage = false) {
         showMessage(getFriendlyError(error), "error");
     }
 }
-
-// ==========================================
-// RENDER APPOINTMENTS
-// ==========================================
 
 function renderAppointments(data) {
     const tbody = document.getElementById("appointmentTableBody");
@@ -86,14 +65,9 @@ function renderAppointments(data) {
     tbody.innerHTML = data.map(appointment => createAppointmentRow(appointment)).join("");
 }
 
-// ==========================================
-// APPOINTMENT ROW
-// ==========================================
-
 function createAppointmentRow(appointment) {
     const status = appointment.status || "Scheduled";
     
-    // Show patient_id and doctor_id from the appointments table
     const patientDisplay = appointment.patient_id ? `Patient #${appointment.patient_id}` : "N/A";
     const doctorDisplay = appointment.doctor_id ? `Doctor #${appointment.doctor_id}` : "N/A";
 
@@ -116,10 +90,6 @@ function createAppointmentRow(appointment) {
     `;
 }
 
-// ==========================================
-// UPDATE STATUS MODAL
-// ==========================================
-
 function openStatusModal(appointmentId, currentStatus) {
     document.getElementById("statusAppointmentId").value = appointmentId;
     document.getElementById("modalAppointmentId").textContent = `#${appointmentId}`;
@@ -127,10 +97,6 @@ function openStatusModal(appointmentId, currentStatus) {
     document.getElementById("statusError").classList.add("d-none");
     statusModal.show();
 }
-
-// ==========================================
-// UPDATE STATUS
-// ==========================================
 
 async function updateStatus() {
     const appointmentId = document.getElementById("statusAppointmentId").value;
@@ -145,10 +111,8 @@ async function updateStatus() {
 
         statusModal.hide();
         
-        // Show success message
         showMessage(`Appointment #${data.id} status updated to "${status}".`, "success");
         
-        // Reload data with keepMessage=true so message stays
         await loadAppointments(true);
 
     } catch (error) {
@@ -159,10 +123,6 @@ async function updateStatus() {
         setStatusLoading(false);
     }
 }
-
-// ==========================================
-// STATS
-// ==========================================
 
 function updateStats(data) {
     document.getElementById("totalCount").textContent = data.length;
@@ -176,10 +136,6 @@ function countStatus(data, status) {
         String(item.status || "").toLowerCase() === status.toLowerCase()
     ).length;
 }
-
-// ==========================================
-// LOADING
-// ==========================================
 
 function setStatusLoading(loading) {
     const button = document.getElementById("statusBtn");
@@ -218,18 +174,10 @@ function renderEmpty(message) {
     document.getElementById("resultInfo").textContent = "No appointments";
 }
 
-// ==========================================
-// STATUS BADGE
-// ==========================================
-
 function statusBadge(status) {
     const normalized = String(status).toLowerCase().replace(/\s+/g, "-");
     return `<span class="status-badge status-${normalized}">${escapeHtml(status)}</span>`;
 }
-
-// ==========================================
-// DATE
-// ==========================================
 
 function formatDate(value) {
     if (!value) return "-";
@@ -244,10 +192,6 @@ function formatDate(value) {
         return value;
     }
 }
-
-// ==========================================
-// TIME
-// ==========================================
 
 function formatTime(value) {
     if (!value) return "-";
@@ -264,10 +208,6 @@ function formatTime(value) {
         return value;
     }
 }
-
-// ==========================================
-// API REQUEST
-// ==========================================
 
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
@@ -310,10 +250,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     return data;
 }
 
-// ==========================================
-// MESSAGE
-// ==========================================
-
 function showMessage(message, type) {
     const box = document.getElementById("messageBox");
     
@@ -342,26 +278,14 @@ function hideMessage() {
     box.textContent = "";
 }
 
-// ==========================================
-// SIDEBAR
-// ==========================================
-
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");
 }
-
-// ==========================================
-// LOGOUT
-// ==========================================
 
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
-
-// ==========================================
-// UTILITIES
-// ==========================================
 
 function capitalize(value) {
     if (!value) return "";

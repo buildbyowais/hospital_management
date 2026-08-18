@@ -1,11 +1,7 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.API_BASE_URL;
 
 let currentPrescriptions = [];
 let viewPrescriptionModal;
-
-// ==========================================
-// INITIALIZE
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", async () => {
     viewPrescriptionModal = new bootstrap.Modal(document.getElementById("viewPrescriptionModal"));
@@ -15,10 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadPrescriptions();
 });
 
-// ==========================================
-// AUTHENTICATION
-// ==========================================
-
 function checkAuthentication() {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -27,10 +19,6 @@ function checkAuthentication() {
     }
     return true;
 }
-
-// ==========================================
-// CURRENT USER
-// ==========================================
 
 async function loadCurrentUser() {
     try {
@@ -42,10 +30,6 @@ async function loadCurrentUser() {
         logout();
     }
 }
-
-// ==========================================
-// LOAD PRESCRIPTIONS
-// ==========================================
 
 async function loadPrescriptions() {
     setSearchLoading(true);
@@ -66,10 +50,6 @@ async function loadPrescriptions() {
     }
 }
 
-// ==========================================
-// RENDER PRESCRIPTIONS
-// ==========================================
-
 function renderPrescriptions(prescriptions) {
     const tbody = document.getElementById("prescriptionsTableBody");
     const resultInfo = document.getElementById("resultInfo");
@@ -89,10 +69,6 @@ function renderPrescriptions(prescriptions) {
 
     tbody.innerHTML = prescriptions.map(prescription => createPrescriptionRow(prescription)).join("");
 }
-
-// ==========================================
-// PRESCRIPTION ROW
-// ==========================================
 
 function createPrescriptionRow(prescription) {
     const patientDisplay = prescription.patient_id ? `Patient #${prescription.patient_id}` : "N/A";
@@ -129,10 +105,6 @@ function createPrescriptionRow(prescription) {
         </tr>
     `;
 }
-
-// ==========================================
-// VIEW PRESCRIPTION
-// ==========================================
 
 async function viewPrescription(prescriptionId) {
     const details = document.getElementById("prescriptionDetails");
@@ -242,10 +214,6 @@ async function viewPrescription(prescriptionId) {
     }
 }
 
-// ==========================================
-// API REQUEST
-// ==========================================
-
 async function apiRequest(endpoint, method = "GET", body = null) {
     const token = localStorage.getItem("access_token");
 
@@ -292,10 +260,6 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     }
 }
 
-// ==========================================
-// LOADING
-// ==========================================
-
 function setSearchLoading(loading) {
     const button = document.getElementById("searchBtn");
     const spinner = document.getElementById("searchSpinner");
@@ -312,10 +276,6 @@ function setSearchLoading(loading) {
         if (text) text.textContent = "Refresh";
     }
 }
-
-// ==========================================
-// MESSAGES
-// ==========================================
 
 function showMessage(message, type) {
     const box = document.getElementById("messageBox");
@@ -345,10 +305,6 @@ function hideMessage() {
     box.textContent = "";
 }
 
-// ==========================================
-// DATE
-// ==========================================
-
 function formatDate(value) {
     if (!value) return "-";
     try {
@@ -363,26 +319,14 @@ function formatDate(value) {
     }
 }
 
-// ==========================================
-// SIDEBAR
-// ==========================================
-
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("show");
 }
-
-// ==========================================
-// LOGOUT
-// ==========================================
 
 function logout() {
     localStorage.clear();
     window.location.href = "../../auth/login.html";
 }
-
-// ==========================================
-// UTILITIES
-// ==========================================
 
 function capitalize(value) {
     if (!value) return "";
