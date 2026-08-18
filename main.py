@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.database import engine
 from app.models.user import Base
-from app.models.user import User
 from app.models.patient import Patient
 from app.models.doctor import Doctor
 from app.models.staff import Staff
@@ -20,10 +19,12 @@ from app.api.appointment import router as appointment_router
 from app.api.prescription import router as prescription_router
 from app.api.report import router as patient_report_router
 
+# Create database tables if they don't exist
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Hospital Management API")
 
+# CORS Middleware (Allow all origins for production)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include all routers
 app.include_router(patient_router)
 app.include_router(doctor_router)
 app.include_router(staff_router)
@@ -42,15 +44,4 @@ app.include_router(patient_report_router)
 
 @app.get("/")
 def home():
-    return {"message": "Hospital Management System!"}
-
-@app.get("/check-admin")
-def check_admin():
-    from app.core.database import SessionLocal
-    db = SessionLocal()
-    target_username = os.getenv("ADMIN_USERNAME", "admin")
-    user = db.query(User).filter(User.username == target_username).first()
-    db.close()
-    if user:
-        return {"exists": True, "username": user.username, "role": user.role}
-    return {"exists": False, "searched_for": target_username}
+    return {"message": "Hospital Management System is running!"}
