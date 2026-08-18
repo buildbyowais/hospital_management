@@ -28,16 +28,13 @@ function redirectByRole(currentRole) {
     }
 }
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-        initializeUser();
-        initializeNavigation();
-        initializeButtons();
-        setPrescriptionDate();
-        loadDashboard();
-    }
-);
+document.addEventListener("DOMContentLoaded", () => {
+    initializeUser();
+    initializeNavigation();
+    initializeButtons();
+    setPrescriptionDate();
+    loadDashboard();
+});
 
 function initializeUser() {
     const displayName = username || "Doctor";
@@ -136,19 +133,19 @@ async function loadDashboard() {
 
 async function loadAppointments() {
     try {
-        const appointments = await apiRequest("/appointments/doctor");
-        const data = Array.isArray(appointments) ? appointments : [];
+        const response = await apiRequest("/appointments/doctor");
+        const appointments = Array.isArray(response) ? response : response?.appointments || [];
 
-        document.getElementById("appointmentCount").textContent = data.length;
-        renderAppointments(data);
-        renderOverviewAppointments(data);
+        document.getElementById("appointmentCount").textContent = appointments.length;
+        renderAppointments(appointments);
+        renderOverviewAppointments(appointments);
     } catch (error) {
         document.getElementById("appointmentCount").textContent = "0";
         document.getElementById("appointmentsContainer").innerHTML = `
-            <div class="empty-state">${escapeHtml(error.message)}</div>
+            <div class="empty-state">No appointments found.</div>
         `;
         document.getElementById("overviewAppointments").innerHTML = `
-            <div class="empty-state">Unable to load appointments.</div>
+            <div class="empty-state">No upcoming appointments.</div>
         `;
     }
 }
@@ -223,7 +220,7 @@ function renderOverviewAppointments(appointments) {
 
     if (!appointments || appointments.length === 0) {
         container.innerHTML = `
-            <div class="empty-state">No appointments found.</div>
+            <div class="empty-state">No upcoming appointments.</div>
         `;
         return;
     }
@@ -258,26 +255,10 @@ function renderOverviewAppointments(appointments) {
 
 async function loadPatients() {
     try {
-        const appointments = await apiRequest("/appointments/doctor");
-        const patientIds = [...new Set((appointments || []).map(appointment => appointment.patient_id).filter(Boolean))];
-
-        if (patientIds.length === 0) {
-            document.getElementById("patientCount").textContent = "0";
-            renderPatients([]);
-            renderOverviewPatients([]);
-            return;
-        }
-
-        const requests = patientIds.map(patientId =>
-            apiRequest(`/patients/${patientId}`).then(patient => patient).catch(() => null)
-        );
-
-        const results = await Promise.all(requests);
-        const patients = results.filter(Boolean);
-
-        document.getElementById("patientCount").textContent = patients.length;
-        renderPatients(patients);
-        renderOverviewPatients(patients);
+        const data = await apiRequest("/patients/?limit=100");
+        document.getElementById("patientCount").textContent = Array.isArray(data) ? data.length : 0;
+        renderPatients(data);
+        renderOverviewPatients(data);
     } catch (error) {
         document.getElementById("patientCount").textContent = "0";
         document.getElementById("patientsContainer").innerHTML = `
