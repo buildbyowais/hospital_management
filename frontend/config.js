@@ -1,9 +1,8 @@
-const BACKEND_URL = window.location.hostname.includes('localhost')
-    ? 'http://127.0.0.1:8000'                       // Local Backend
-    : 'https://hospital-management-lmfv.onrender.com';         // Render Backend URL (Yahan apna Render URL daalo)
+const isLocal = window.location.hostname === 'localhost' || 
+                window.location.hostname === '127.0.0.1';
 
-// 3. Global variable assign karo taake sab JS files use kar sakein
+const BACKEND_URL = (isLocal || window.location.protocol === 'file:')
+    ? 'http://127.0.0.1:8000' 
+    : 'https://hospital-management-lmfv.onrender.com';
+
 window.API_BASE_URL = BACKEND_URL;
-
-// 4. Debug ke liye console mein print karo (Optional)
-console.log("✅ Using Backend URL:", window.API_BASE_URL);
